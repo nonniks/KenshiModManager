@@ -1,0 +1,14 @@
+﻿<Application x:Class="KenshiModManager.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:KenshiModManager"
+             xmlns:converters="clr-namespace:KenshiModManager.Converters"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <converters:BoolToStatusConverter x:Key="BoolToStatusConverter"/>
+        <converters:BoolToValidationConverter x:Key="BoolToValidationConverter"/>
+        <converters:BoolToColorConverter x:Key="BoolToColorConverter"/>
+        <converters:BoolToOpacityConverter x:Key="BoolToOpacityConverter"/>
+    </Application.Resources>
+</Application>

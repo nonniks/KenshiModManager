@@ -1,0 +1,294 @@
+<Window x:Class="KenshiModManager.Views.AddModsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:KenshiModManager.Views"
+        xmlns:converters="clr-namespace:KenshiModManager.Converters"
+        Title="Add Mods to Playset" Height="700" Width="1000" WindowStartupLocation="CenterOwner"
+        Background="#1E1E1E" ResizeMode="CanResize">
+  <FrameworkElement.Resources>
+    <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    <converters:ImagePathConverter x:Key="ImagePathConverter"/>
+    <Style x:Key="ModernButtonStyle" TargetType="{x:Type Button}">
+      <Setter Property="Control.Background" Value="#2D2D30"/>
+      <Setter Property="Control.Foreground" Value="#CCCCCC"/>
+      <Setter Property="Control.BorderThickness" Value="0"/>
+      <Setter Property="Control.Padding" Value="15,10"/>
+      <Setter Property="Control.FontSize" Value="13"/>
+      <Setter Property="FrameworkElement.Cursor" Value="Hand"/>
+      <Setter Property="Control.Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type Button}">
+            <Border Background="{TemplateBinding Control.Background}" CornerRadius="4"
+                    Padding="{TemplateBinding Control.Padding}">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+      <Style.Triggers>
+        <Trigger Property="UIElement.IsMouseOver" Value="True">
+          <Setter Property="Control.Background" Value="#3E3E42"/>
+        </Trigger>
+        <Trigger Property="UIElement.IsEnabled" Value="False">
+          <Setter Property="UIElement.Opacity" Value="0.5"/>
+          <Setter Property="FrameworkElement.Cursor" Value="Arrow"/>
+        </Trigger>
+      </Style.Triggers>
+    </Style>
+    <Style x:Key="PrimaryButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource ModernButtonStyle}">
+      <Setter Property="Control.Background" Value="#0E639C"/>
+      <Setter Property="Control.Foreground" Value="White"/>
+      <Setter Property="Control.FontWeight" Value="SemiBold"/>
+      <Style.Triggers>
+        <Trigger Property="UIElement.IsMouseOver" Value="True">
+          <Setter Property="Control.Background" Value="#1177BB"/>
+        </Trigger>
+      </Style.Triggers>
+    </Style>
+    <Style TargetType="{x:Type CheckBox}">
+      <Setter Property="Control.Foreground" Value="#CCCCCC"/>
+      <Setter Property="Control.Background" Value="#2D2D30"/>
+      <Setter Property="Control.BorderBrush" Value="#3E3E42"/>
+    </Style>
+    <Style TargetType="{x:Type ComboBox}">
+      <Setter Property="Control.Background" Value="#2D2D30"/>
+      <Setter Property="Control.Foreground" Value="#CCCCCC"/>
+      <Setter Property="Control.BorderBrush" Value="#3E3E42"/>
+      <Setter Property="Control.BorderThickness" Value="1"/>
+      <Setter Property="Control.Padding" Value="10,5"/>
+      <Setter Property="Control.Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type ComboBox}">
+            <Grid>
+              <ToggleButton x:Name="ToggleButton" Background="{TemplateBinding Control.Background}"
+                            BorderBrush="{TemplateBinding Control.BorderBrush}"
+                            BorderThickness="{TemplateBinding Control.BorderThickness}" Focusable="false" ClickMode="Press"
+                            IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                <Control.Template>
+                  <ControlTemplate TargetType="{x:Type ToggleButton}">
+                    <Border x:Name="Border" Background="{TemplateBinding Control.Background}"
+                            BorderBrush="{TemplateBinding Control.BorderBrush}"
+                            BorderThickness="{TemplateBinding Control.BorderThickness}" CornerRadius="4">
+                      <Grid>
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition/>
+                          <ColumnDefinition Width="20"/>
+                        </Grid.ColumnDefinitions>
+                        <ContentPresenter Grid.Column="0" Margin="8,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        <Path x:Name="Arrow" Grid.Column="1" Data="M 0,0 L 4,4 8,0 Z" Fill="#CCCCCC" HorizontalAlignment="Center"
+                              VerticalAlignment="Center"/>
+                      </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                      <Trigger Property="UIElement.IsMouseOver" Value="True">
+                        <Setter TargetName="Border" Property="Border.Background" Value="#3E3E42"/>
+                      </Trigger>
+                    </ControlTemplate.Triggers>
+                  </ControlTemplate>
+                </Control.Template>
+              </ToggleButton>
+              <ContentPresenter x:Name="ContentSite" Content="{TemplateBinding ComboBox.SelectionBoxItem}"
+                                ContentTemplate="{TemplateBinding ComboBox.SelectionBoxItemTemplate}" Margin="8,5"
+                                VerticalAlignment="Center" HorizontalAlignment="Left" IsHitTestVisible="False"/>
+              <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding ComboBox.IsDropDownOpen}"
+                     AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                <Grid x:Name="DropDown" MinWidth="{TemplateBinding FrameworkElement.ActualWidth}" MaxHeight="300">
+                  <Border Background="#2D2D30" BorderBrush="#3E3E42" BorderThickness="1" CornerRadius="4">
+                    <ScrollViewer Margin="4,6" SnapsToDevicePixels="True">
+                      <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                    </ScrollViewer>
+                  </Border>
+                </Grid>
+              </Popup>
+            </Grid>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style TargetType="{x:Type ComboBoxItem}">
+      <Setter Property="Control.Background" Value="Transparent"/>
+      <Setter Property="Control.Foreground" Value="#CCCCCC"/>
+      <Setter Property="Control.Padding" Value="8,6"/>
+      <Setter Property="Control.Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type ComboBoxItem}">
+            <Border x:Name="Border" Background="{TemplateBinding Control.Background}"
+                    Padding="{TemplateBinding Control.Padding}">
+              <ContentPresenter/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="UIElement.IsMouseOver" Value="True">
+                <Setter TargetName="Border" Property="Border.Background" Value="#3E3E42"/>
+              </Trigger>
+              <Trigger Property="ListBoxItem.IsSelected" Value="True">
+                <Setter TargetName="Border" Property="Border.Background" Value="#0E639C"/>
+                <Setter Property="Control.Foreground" Value="White"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style x:Key="ModListItemStyle" TargetType="{x:Type ListBoxItem}">
+      <Setter Property="Control.Background" Value="#2D2D30"/>
+      <Setter Property="Control.Foreground" Value="#CCCCCC"/>
+      <Setter Property="FrameworkElement.Margin" Value="0,0,0,3"/>
+      <Setter Property="Control.Padding" Value="0"/>
+      <Setter Property="Control.BorderThickness" Value="1"/>
+      <Setter Property="Control.BorderBrush" Value="#3E3E42"/>
+      <Setter Property="Control.Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type ListBoxItem}">
+            <Border Background="{TemplateBinding Control.Background}"
+                    BorderBrush="{TemplateBinding Control.BorderBrush}"
+                    BorderThickness="{TemplateBinding Control.BorderThickness}" CornerRadius="4"
+                    Padding="{TemplateBinding Control.Padding}">
+              <ContentPresenter/>
+            </Border>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+      <Style.Triggers>
+        <Trigger Property="UIElement.IsMouseOver" Value="True">
+          <Setter Property="Control.Background" Value="#3E3E42"/>
+        </Trigger>
+        <Trigger Property="ListBoxItem.IsSelected" Value="True">
+          <Setter Property="Control.Background" Value="#252526"/>
+          <Setter Property="Control.BorderBrush" Value="#0E639C"/>
+        </Trigger>
+      </Style.Triggers>
+    </Style>
+  </FrameworkElement.Resources>
+  <Grid Margin="20">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+    <StackPanel Grid.Row="0" Margin="0,0,0,20">
+      <TextBlock Text="ADD MODS TO PLAYSET" FontSize="20" FontWeight="SemiBold" Foreground="White"/>
+      <TextBlock Margin="0,5,0,0" Foreground="#999999" FontSize="13">
+        <Run Text="Select mods to add to your active playset"/>
+      </TextBlock>
+    </StackPanel>
+    <Grid Row="1" Margin="0,0,0,15">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="Auto"/>
+      </Grid.ColumnDefinitions>
+      <TextBox Grid.Column="0" Height="35" Background="#2D2D30" Foreground="#CCCCCC" BorderBrush="#3E3E42"
+               BorderThickness="1" Padding="10,8" FontSize="13" VerticalContentAlignment="Center"
+               Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
+        <FrameworkElement.Style>
+          <Style TargetType="{x:Type TextBox}">
+            <Style.Triggers>
+              <Trigger Property="TextBox.Text" Value="">
+                <Setter Property="Control.Background" Value="#2D2D30"/>
+              </Trigger>
+            </Style.Triggers>
+          </Style>
+        </FrameworkElement.Style>
+      </TextBox>
+      <ComboBox Grid.Column="1" Width="150" Height="35" Margin="10,0,0,0" Background="#2D2D30" Foreground="#CCCCCC"
+                BorderBrush="#3E3E42" Padding="10,5" SelectedValue="{Binding SortBy}">
+        <ComboBoxItem Content="Sort by: Name" Tag="Name"/>
+        <ComboBoxItem Content="Sort by: Author" Tag="Author"/>
+        <ComboBoxItem Content="Sort by: Size" Tag="Size"/>
+        <ComboBoxItem Content="Sort by: Date" Tag="Date"/>
+      </ComboBox>
+      <Button Grid.Column="2" Content="Select All" Style="{StaticResource ModernButtonStyle}" Margin="10,0,0,0"
+              Height="35" Command="{Binding SelectAllCommand}"/>
+      <Button Grid.Column="3" Content="Deselect All" Style="{StaticResource ModernButtonStyle}" Margin="5,0,0,0"
+              Height="35" Command="{Binding DeselectAllCommand}"/>
+    </Grid>
+    <Border Grid.Row="2" Background="#252526" BorderBrush="#3E3E42" BorderThickness="1" CornerRadius="6">
+      <Grid>
+        <Border Background="#1E1E1E" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
+          <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock Text="⟳" FontSize="48" Foreground="#0E639C" HorizontalAlignment="Center"
+                       RenderTransformOrigin="0.5,0.5">
+              <UIElement.RenderTransform>
+                <RotateTransform x:Name="LoadingRotation"/>
+              </UIElement.RenderTransform>
+              <FrameworkElement.Triggers>
+                <EventTrigger RoutedEvent="Loaded">
+                  <BeginStoryboard>
+                    <Storyboard RepeatBehavior="Forever">
+                      <DoubleAnimation Storyboard.TargetName="LoadingRotation" Storyboard.TargetProperty="Angle" From="0" To="360"
+                                       Duration="0:0:1.5"/>
+                    </Storyboard>
+                  </BeginStoryboard>
+                </EventTrigger>
+              </FrameworkElement.Triggers>
+            </TextBlock>
+            <TextBlock Text="Loading available mods..." FontSize="16" Foreground="#CCCCCC" Margin="0,20,0,0"
+                       HorizontalAlignment="Center"/>
+          </StackPanel>
+        </Border>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                      Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Inverted}">
+          <ListBox MouseDoubleClick="ModsListBox_MouseDoubleClick" x:Name="ModsListBox"
+                   ItemContainerStyle="{StaticResource ModListItemStyle}" Background="Transparent" BorderThickness="0"
+                   Padding="10" SelectionMode="Extended" ItemsSource="{Binding FilteredMods}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Grid Height="60" Margin="5">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                  </Grid.ColumnDefinitions>
+                  <CheckBox Grid.Column="0" VerticalAlignment="Center" Margin="10,0,15,0" IsChecked="{Binding IsSelected}"/>
+                  <Border Grid.Column="1" Width="48" Height="48" CornerRadius="4" VerticalAlignment="Center"
+                          Margin="0,0,15,0" BorderBrush="#3E3E42" BorderThickness="1">
+                    <Image Stretch="UniformToFill"
+                           Source="{Binding ModInfo.ImagePath, Converter={StaticResource ImagePathConverter}}"/>
+                  </Border>
+                  <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                    <TextBlock FontSize="14" FontWeight="SemiBold" Foreground="White" TextTrimming="CharacterEllipsis"
+                               Text="{Binding ModInfo.Name}"/>
+                    <TextBlock FontSize="11" Foreground="#999999" Margin="0,2,0,0">
+                      <Run Text="Author:"/>
+                      <Run Foreground="#CCCCCC" Text="{Binding ModInfo.Author, Mode=OneWay}"/>
+                    </TextBlock>
+                  </StackPanel>
+                  <StackPanel Grid.Column="3" VerticalAlignment="Center" Margin="10,0,0,0">
+                    <TextBlock FontSize="11" Foreground="#999999" HorizontalAlignment="Right"
+                               Text="{Binding ModInfo.FileSize, StringFormat='{}{0:N0} bytes'}"/>
+                    <TextBlock FontSize="11" Foreground="#999999" HorizontalAlignment="Right" Margin="0,2,0,0"
+                               Text="{Binding ModInfo.LastModified, StringFormat=d}"/>
+                  </StackPanel>
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ListBox>
+        </ScrollViewer>
+      </Grid>
+    </Border>
+    <Grid Row="3" Margin="0,20,0,0">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="Auto"/>
+      </Grid.ColumnDefinitions>
+      <TextBlock Grid.Column="0" VerticalAlignment="Center" Foreground="#CCCCCC" FontSize="13">
+        <Run Text="{Binding SelectedCount, Mode=OneWay}"/>
+        <Run Text="of"/>
+        <Run Text="{Binding TotalCount, Mode=OneWay}"/>
+        <Run Text="mods selected"/>
+      </TextBlock>
+      <Button Click="CancelButton_Click" Grid.Column="1" Content="CANCEL"
+              Style="{StaticResource ModernButtonStyle}" MinWidth="120" Margin="0,0,10,0"/>
+      <Button Click="AddButton_Click" Grid.Column="2" Content="ADD TO PLAYSET"
+              Style="{StaticResource PrimaryButtonStyle}" MinWidth="160"
+              Command="{Binding AddSelectedModsCommand}"/>
+    </Grid>
+  </Grid>
+</Window>

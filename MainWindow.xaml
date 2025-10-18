@@ -1,0 +1,351 @@
+<Window x:Class="KenshiModManager.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:KenshiModManager"
+        xmlns:vm="clr-namespace:KenshiModManager.ViewModels"
+        xmlns:views="clr-namespace:KenshiModManager.Views"
+        xmlns:converters="clr-namespace:KenshiModManager.Converters"
+        Title="Kenshi Mod Manager" Height="750" Width="1280" WindowStartupLocation="CenterScreen"
+        Icon="Resources/app.ico"
+        Background="#1E1E1E">
+  <FrameworkElement.Resources>
+    <Style x:Key="DarkContextMenuStyle" TargetType="{x:Type ContextMenu}">
+      <Setter Property="Control.Background" Value="#2D2D30"/>
+      <Setter Property="Control.BorderBrush" Value="#3E3E42"/>
+      <Setter Property="Control.BorderThickness" Value="1"/>
+      <Setter Property="Control.Padding" Value="2"/>
+      <Setter Property="Control.Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type ContextMenu}">
+            <Border Background="{TemplateBinding Control.Background}"
+                    BorderBrush="{TemplateBinding Control.BorderBrush}"
+                    BorderThickness="{TemplateBinding Control.BorderThickness}" CornerRadius="4"
+                    Padding="{TemplateBinding Control.Padding}">
+              <StackPanel IsItemsHost="True" Background="Transparent"/>
+            </Border>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style x:Key="NoIconMenuItemStyle" TargetType="{x:Type MenuItem}">
+      <Setter Property="Control.Foreground" Value="#CCCCCC"/>
+      <Setter Property="Control.Background" Value="Transparent"/>
+      <Setter Property="FrameworkElement.Height" Value="32"/>
+      <Setter Property="Control.Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type MenuItem}">
+            <Border x:Name="Border" Background="Transparent" BorderThickness="0">
+              <TextBlock x:Name="HeaderText" Text="{TemplateBinding HeaderedItemsControl.Header}"
+                         Foreground="{TemplateBinding Control.Foreground}" Background="Transparent" Padding="12,6"
+                         VerticalAlignment="Center" HorizontalAlignment="Left"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="MenuItem.IsHighlighted" Value="True">
+                <Setter TargetName="Border" Property="Border.Background" Value="#3E3E42"/>
+              </Trigger>
+              <Trigger Property="UIElement.IsEnabled" Value="False">
+                <Setter TargetName="HeaderText" Property="TextBlock.Foreground" Value="#666666"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style x:Key="ModernButtonStyle" TargetType="{x:Type Button}">
+      <Setter Property="Control.Background" Value="#2D2D30"/>
+      <Setter Property="Control.Foreground" Value="#CCCCCC"/>
+      <Setter Property="Control.BorderThickness" Value="0"/>
+      <Setter Property="Control.Padding" Value="15,10"/>
+      <Setter Property="Control.FontSize" Value="13"/>
+      <Setter Property="FrameworkElement.Cursor" Value="Hand"/>
+      <Setter Property="Control.Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type Button}">
+            <Border Background="{TemplateBinding Control.Background}" CornerRadius="4"
+                    Padding="{TemplateBinding Control.Padding}">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+      <Style.Triggers>
+        <Trigger Property="UIElement.IsMouseOver" Value="True">
+          <Setter Property="Control.Background" Value="#3E3E42"/>
+        </Trigger>
+        <Trigger Property="UIElement.IsEnabled" Value="False">
+          <Setter Property="UIElement.Opacity" Value="0.5"/>
+          <Setter Property="FrameworkElement.Cursor" Value="Arrow"/>
+        </Trigger>
+      </Style.Triggers>
+    </Style>
+    <Style x:Key="LaunchButtonStyle" TargetType="{x:Type Button}">
+      <Setter Property="Control.Background" Value="#0E639C"/>
+      <Setter Property="Control.Foreground" Value="White"/>
+      <Setter Property="Control.BorderThickness" Value="0"/>
+      <Setter Property="Control.Padding" Value="25,12"/>
+      <Setter Property="Control.FontSize" Value="14"/>
+      <Setter Property="Control.FontWeight" Value="SemiBold"/>
+      <Setter Property="FrameworkElement.Cursor" Value="Hand"/>
+      <Setter Property="Control.Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type Button}">
+            <Border Background="{TemplateBinding Control.Background}" CornerRadius="4"
+                    Padding="{TemplateBinding Control.Padding}">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+      <Style.Triggers>
+        <Trigger Property="UIElement.IsMouseOver" Value="True">
+          <Setter Property="Control.Background" Value="#1177BB"/>
+        </Trigger>
+        <Trigger Property="UIElement.IsEnabled" Value="False">
+          <Setter Property="UIElement.Opacity" Value="0.5"/>
+          <Setter Property="FrameworkElement.Cursor" Value="Arrow"/>
+        </Trigger>
+      </Style.Triggers>
+    </Style>
+    <Style x:Key="ModernTabItemStyle" TargetType="{x:Type TabItem}">
+      <Setter Property="Control.Foreground" Value="#CCCCCC"/>
+      <Setter Property="Control.FontSize" Value="14"/>
+      <Setter Property="Control.Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type TabItem}">
+            <Border Name="Border" Background="Transparent" BorderBrush="Transparent" BorderThickness="0,0,0,3"
+                    Padding="25,12" Margin="0,0,5,0">
+              <ContentPresenter ContentSource="Header" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="TabItem.IsSelected" Value="True">
+                <Setter TargetName="Border" Property="Border.Background" Value="#252526"/>
+                <Setter TargetName="Border" Property="Border.BorderBrush" Value="#0E639C"/>
+                <Setter Property="Control.Foreground" Value="White"/>
+              </Trigger>
+              <Trigger Property="UIElement.IsMouseOver" Value="True">
+                <Setter TargetName="Border" Property="Border.Background" Value="#2D2D30"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style TargetType="{x:Type ComboBox}">
+      <Setter Property="Control.Background" Value="#2D2D30"/>
+      <Setter Property="Control.Foreground" Value="#CCCCCC"/>
+      <Setter Property="Control.BorderBrush" Value="#3E3E42"/>
+      <Setter Property="Control.BorderThickness" Value="1"/>
+      <Setter Property="Control.Padding" Value="10,5"/>
+      <Setter Property="Control.Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type ComboBox}">
+            <Grid>
+              <ToggleButton x:Name="ToggleButton" Background="{TemplateBinding Control.Background}"
+                            BorderBrush="{TemplateBinding Control.BorderBrush}"
+                            BorderThickness="{TemplateBinding Control.BorderThickness}" Focusable="false" ClickMode="Press"
+                            IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                <Control.Template>
+                  <ControlTemplate TargetType="{x:Type ToggleButton}">
+                    <Border x:Name="Border" Background="{TemplateBinding Control.Background}"
+                            BorderBrush="{TemplateBinding Control.BorderBrush}"
+                            BorderThickness="{TemplateBinding Control.BorderThickness}" CornerRadius="4">
+                      <Grid>
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition/>
+                          <ColumnDefinition Width="20"/>
+                        </Grid.ColumnDefinitions>
+                        <ContentPresenter Grid.Column="0" Margin="8,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        <Path x:Name="Arrow" Grid.Column="1" Data="M 0,0 L 4,4 8,0 Z" Fill="#CCCCCC" HorizontalAlignment="Center"
+                              VerticalAlignment="Center"/>
+                      </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                      <Trigger Property="UIElement.IsMouseOver" Value="True">
+                        <Setter TargetName="Border" Property="Border.Background" Value="#3E3E42"/>
+                      </Trigger>
+                    </ControlTemplate.Triggers>
+                  </ControlTemplate>
+                </Control.Template>
+              </ToggleButton>
+              <ContentPresenter x:Name="ContentSite" Content="{TemplateBinding ComboBox.SelectionBoxItem}"
+                                ContentTemplate="{TemplateBinding ComboBox.SelectionBoxItemTemplate}" Margin="8,5"
+                                VerticalAlignment="Center" HorizontalAlignment="Left" IsHitTestVisible="False"/>
+              <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding ComboBox.IsDropDownOpen}"
+                     AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                <Grid x:Name="DropDown" MinWidth="{TemplateBinding FrameworkElement.ActualWidth}" MaxHeight="300">
+                  <Border Background="#2D2D30" BorderBrush="#3E3E42" BorderThickness="1" CornerRadius="4">
+                    <ScrollViewer Margin="4,6" SnapsToDevicePixels="True">
+                      <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                    </ScrollViewer>
+                  </Border>
+                </Grid>
+              </Popup>
+            </Grid>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style TargetType="{x:Type ComboBoxItem}">
+      <Setter Property="Control.Background" Value="Transparent"/>
+      <Setter Property="Control.Foreground" Value="#CCCCCC"/>
+      <Setter Property="Control.Padding" Value="8,6"/>
+      <Setter Property="Control.Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type ComboBoxItem}">
+            <Border x:Name="Border" Background="{TemplateBinding Control.Background}"
+                    Padding="{TemplateBinding Control.Padding}">
+              <ContentPresenter/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="UIElement.IsMouseOver" Value="True">
+                <Setter TargetName="Border" Property="Border.Background" Value="#3E3E42"/>
+              </Trigger>
+              <Trigger Property="ListBoxItem.IsSelected" Value="True">
+                <Setter TargetName="Border" Property="Border.Background" Value="#0E639C"/>
+                <Setter Property="Control.Foreground" Value="White"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </FrameworkElement.Resources>
+  <FrameworkElement.DataContext>
+    <vm:MainViewModel/>
+  </FrameworkElement.DataContext>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+    <Border Grid.Row="0" Background="#252526" BorderBrush="#3E3E42" BorderThickness="0,0,0,1" Padding="20,15">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0" Orientation="Horizontal">
+          <Image Source="Resources/app.png" Width="48" Height="48" VerticalAlignment="Center" Margin="0,0,10,0"/>
+          <TextBlock Text="Kenshi Mod Manager" FontSize="20" FontWeight="SemiBold" Foreground="White"
+                     VerticalAlignment="Center"/>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+          <TextBlock Text="Playset:" Foreground="#CCCCCC" FontSize="13" VerticalAlignment="Center" Margin="0,0,10,0"/>
+          <ComboBox MinWidth="200" Background="#2D2D30" Foreground="#CCCCCC"
+                    BorderBrush="#3E3E42" FontSize="13" Padding="10,5" ItemsSource="{Binding Playsets}"
+                    SelectedItem="{Binding SelectedPlayset}">
+            <ComboBox.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding Name}" Foreground="#CCCCCC"/>
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+            <ItemsControl.ItemContainerStyle>
+              <Style TargetType="{x:Type ComboBoxItem}">
+                <Setter Property="Control.Foreground" Value="#CCCCCC"/>
+                <Setter Property="Control.Background" Value="#2D2D30"/>
+                <Setter Property="Control.Padding" Value="10,5"/>
+                <Style.Triggers>
+                  <Trigger Property="UIElement.IsMouseOver" Value="True">
+                    <Setter Property="Control.Background" Value="#3E3E42"/>
+                  </Trigger>
+                  <Trigger Property="ListBoxItem.IsSelected" Value="True">
+                    <Setter Property="Control.Background" Value="#0E639C"/>
+                    <Setter Property="Control.Foreground" Value="White"/>
+                  </Trigger>
+                </Style.Triggers>
+              </Style>
+            </ItemsControl.ItemContainerStyle>
+          </ComboBox>
+          <Button Content="⋯" FontSize="18" FontWeight="Bold" Width="30" Height="30" Background="#2D2D30"
+                  Foreground="#CCCCCC" BorderThickness="0" Cursor="Hand" Margin="5,0,0,0"
+                  Click="PlaysetOptionsButton_Click">
+            <Control.Template>
+              <ControlTemplate TargetType="{x:Type Button}">
+                <Border Background="{TemplateBinding Control.Background}" CornerRadius="4">
+                  <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+              </ControlTemplate>
+            </Control.Template>
+            <FrameworkElement.Style>
+              <Style TargetType="{x:Type Button}">
+                <Setter Property="Control.Background" Value="#2D2D30"/>
+                <Style.Triggers>
+                  <Trigger Property="UIElement.IsMouseOver" Value="True">
+                    <Setter Property="Control.Background" Value="#3E3E42"/>
+                  </Trigger>
+                </Style.Triggers>
+              </Style>
+            </FrameworkElement.Style>
+            <FrameworkElement.ContextMenu>
+              <ContextMenu Style="{StaticResource DarkContextMenuStyle}">
+                <MenuItem Header="📋 Duplicate" Style="{StaticResource NoIconMenuItemStyle}"
+                          Command="{Binding DuplicatePlaysetCommand}" CommandParameter="{Binding SelectedPlayset}"/>
+                <MenuItem Header="✏ Rename" Style="{StaticResource NoIconMenuItemStyle}"
+                          Command="{Binding RenamePlaysetCommand}" CommandParameter="{Binding SelectedPlayset}"/>
+                <MenuItem Header="📤 Share" Style="{StaticResource NoIconMenuItemStyle}"
+                          Command="{Binding ExportPlaysetCommand}" CommandParameter="{Binding SelectedPlayset}"/>
+                <MenuItem Header="🗑 Delete" Style="{StaticResource NoIconMenuItemStyle}"
+                          Command="{Binding DeletePlaysetCommand}" CommandParameter="{Binding SelectedPlayset}"/>
+              </ContextMenu>
+            </FrameworkElement.ContextMenu>
+          </Button>
+        </StackPanel>
+        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+          <Button Content="+ New Playset" Style="{StaticResource ModernButtonStyle}" Margin="0,0,10,0"
+                  Command="{Binding CreatePlaysetCommand}"/>
+          <Button Content="📂 Import" Style="{StaticResource ModernButtonStyle}"
+                  Command="{Binding ImportPlaysetCommand}"/>
+        </StackPanel>
+      </Grid>
+    </Border>
+    <TabControl Grid.Row="1" Background="#1E1E1E" BorderThickness="0">
+      <FrameworkElement.Resources>
+        <Style TargetType="{x:Type TabItem}" BasedOn="{StaticResource ModernTabItemStyle}"/>
+      </FrameworkElement.Resources>
+      <TabItem Header="📦 Mod Manager">
+        <views:ModsTabView DataContext="{Binding ModsTabViewModel}"/>
+      </TabItem>
+      <TabItem Header="🌐 Translator">
+        <Grid Background="#1E1E1E">
+          <TextBlock Text="Translator content will be here" Foreground="#666666" HorizontalAlignment="Center"
+                     VerticalAlignment="Center" FontSize="16"/>
+        </Grid>
+      </TabItem>
+      <TabItem Header="✓ Validator &amp; Auto-Fix">
+        <Grid Background="#1E1E1E">
+          <TextBlock Text="Validator content will be here" Foreground="#666666" HorizontalAlignment="Center"
+                     VerticalAlignment="Center" FontSize="16"/>
+        </Grid>
+      </TabItem>
+      <TabItem Header="⚙ Settings">
+        <views:SettingsTabView DataContext="{Binding SettingsTabViewModel}"/>
+      </TabItem>
+    </TabControl>
+    <Border Grid.Row="2" Background="#252526" BorderBrush="#3E3E42" BorderThickness="0,1,0,0" Padding="20,12">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+          <TextBlock Text="Path: " VerticalAlignment="Center" Foreground="#CCCCCC" FontSize="12" Margin="0,0,5,0"/>
+          <TextBlock VerticalAlignment="Center" Foreground="#999999" FontSize="12" Margin="0,0,30,0"
+                     Text="{Binding KenshiPath}"/>
+          <TextBlock Text="Mods: " VerticalAlignment="Center" Foreground="#CCCCCC" FontSize="12" Margin="0,0,5,0"/>
+          <TextBlock VerticalAlignment="Center" Foreground="#4EC9B0" FontWeight="Bold" FontSize="12"
+                     Text="{Binding ActiveModsCount}"/>
+        </StackPanel>
+        <Button Grid.Column="2" Content="🔄 Refresh" Style="{StaticResource ModernButtonStyle}" MinWidth="100"
+                Margin="0,0,10,0" Command="{Binding RefreshModsCommand}"/>
+        <Button Grid.Column="3" Content="▶ Launch" Style="{StaticResource LaunchButtonStyle}" MinWidth="120"
+                Command="{Binding LaunchGameCommand}"/>
+      </Grid>
+    </Border>
+  </Grid>
+</Window>
