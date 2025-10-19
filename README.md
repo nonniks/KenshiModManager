@@ -66,7 +66,7 @@ Output will be in `bin\Release\net9.0-windows\win-x64\publish\`
 
 ## License
 
-MIT License - See LICENSE file for details
+MIT License - See [LICENSE](https://github.com/nonniks/KenshiModManager/blob/master/LICENSE) file for details
 
 ## Support
 
