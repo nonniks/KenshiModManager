@@ -20,7 +20,7 @@ public partial class App : Application
         AutoUpdater.ShowRemindLaterButton = true;
         AutoUpdater.ReportErrors = true;
 
-        string updateXmlUrl = "https://raw.githubusercontent.com/nonniks/KenshiModManager/main/update.xml";
+        string updateXmlUrl = "https://raw.githubusercontent.com/nonniks/KenshiModManager/master/update.xml";
 
         AutoUpdater.Start(updateXmlUrl);
     }

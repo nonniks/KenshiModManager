@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <item>
-  <version>1.0.0</version>
-  <url>https://github.com/nonniks/KenshiModManager/releases/download/v1.0.0/KMM_portable_v1.0.0.zip</url>
+  <version>1.0.1</version>
+  <url>https://github.com/nonniks/KenshiModManager/releases/download/1.0.1/KMM_portable_v1.0.1.zip</url>
   <changelog>
     <![CDATA[
-    <h2>Version 1.0.0 - Initial Release</h2>
+    <h2>Version 1.0.1</h2>
     <ul>
-      <li>✨ Modern playset management system</li>
-      <li>🎮 Support for both Steam Workshop and local mods</li>
-      <li>🔄 Drag and drop mod reordering</li>
-      <li>💾 Automatic playset saving</li>
-      <li>⚙️ Auto-detect Kenshi and Steam paths</li>
-      <li>🎨 Dark theme UI</li>
+      <li>Improved BrowseKenshiPath() - add support for all .exe files</li>
+      <li>Made CountMods() recursive to find mods in subfolders</li>
+      <li>Added status messages for path validation feedback</li>
+      <li>Updated SettingsTabView.xaml to show mod counts and status</li>
     </ul>
     ]]>
   </changelog>

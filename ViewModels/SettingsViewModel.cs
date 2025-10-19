@@ -26,6 +26,9 @@ namespace KenshiModManager.ViewModels
         private bool _isWorkshopPathCustom;
         private int _modsCount;
         private int _workshopModsCount;
+        private string _kenshiPathStatus = string.Empty;
+        private string _modsPathStatus = string.Empty;
+        private string _workshopPathStatus = string.Empty;
 
         public SettingsViewModel(AppSettings appSettings)
         {
@@ -106,6 +109,24 @@ namespace KenshiModManager.ViewModels
             set => SetProperty(ref _workshopModsCount, value);
         }
 
+        public string KenshiPathStatus
+        {
+            get => _kenshiPathStatus;
+            set => SetProperty(ref _kenshiPathStatus, value);
+        }
+
+        public string ModsPathStatus
+        {
+            get => _modsPathStatus;
+            set => SetProperty(ref _modsPathStatus, value);
+        }
+
+        public string WorkshopPathStatus
+        {
+            get => _workshopPathStatus;
+            set => SetProperty(ref _workshopPathStatus, value);
+        }
+
         public ICommand BrowseKenshiPathCommand { get; }
         public ICommand BrowseModsPathCommand { get; }
         public ICommand BrowseWorkshopPathCommand { get; }
@@ -153,28 +174,68 @@ namespace KenshiModManager.ViewModels
         private void ValidateAllPaths()
         {
             IsKenshiPathValid = ValidateKenshiPath(KenshiPath);
+            if (IsKenshiPathValid)
+            {
+                KenshiPathStatus = "✓ Valid - Kenshi installation found";
+            }
+            else if (string.IsNullOrEmpty(KenshiPath))
+            {
+                KenshiPathStatus = "⚠ Path not set";
+            }
+            else
+            {
+                KenshiPathStatus = "✗ Invalid - kenshi_x64.exe or kenshi.exe not found";
+            }
 
             IsModsPathValid = ValidateModsPath(ModsPath);
             if (IsModsPathValid)
             {
                 ModsCount = CountMods(ModsPath);
+                if (ModsCount > 0)
+                {
+                    ModsPathStatus = $"✓ Valid - Found {ModsCount} mod(s)";
+                }
+                else
+                {
+                    ModsPathStatus = "⚠ Valid folder, but no .mod files found";
+                }
+            }
+            else if (string.IsNullOrEmpty(ModsPath))
+            {
+                ModsCount = 0;
+                ModsPathStatus = "⚠ Path not set";
             }
             else
             {
                 ModsCount = 0;
+                ModsPathStatus = "✗ Invalid - Folder does not exist";
             }
 
             IsWorkshopPathValid = ValidateWorkshopPath(WorkshopPath);
             if (IsWorkshopPathValid)
             {
                 WorkshopModsCount = CountMods(WorkshopPath);
+                if (WorkshopModsCount > 0)
+                {
+                    WorkshopPathStatus = $"✓ Valid - Found {WorkshopModsCount} mod(s)";
+                }
+                else
+                {
+                    WorkshopPathStatus = "⚠ Valid folder, but no .mod files found";
+                }
+            }
+            else if (string.IsNullOrEmpty(WorkshopPath))
+            {
+                WorkshopModsCount = 0;
+                WorkshopPathStatus = "⚠ Path not set";
             }
             else
             {
                 WorkshopModsCount = 0;
+                WorkshopPathStatus = "✗ Invalid - Folder does not exist";
             }
 
-            Console.WriteLine($"[SettingsViewModel] Validated paths: Kenshi={IsKenshiPathValid}, Mods={IsModsPathValid}, Workshop={IsWorkshopPathValid}");
+            Console.WriteLine($"[SettingsViewModel] Validated paths: Kenshi={IsKenshiPathValid}, Mods={IsModsPathValid} ({ModsCount}), Workshop={IsWorkshopPathValid} ({WorkshopModsCount})");
         }
 
         private bool ValidateKenshiPath(string path)
@@ -203,7 +264,7 @@ namespace KenshiModManager.ViewModels
                 if (!Directory.Exists(path))
                     return 0;
 
-                return Directory.GetFiles(path, "*.mod", SearchOption.TopDirectoryOnly).Length;
+                return Directory.GetFiles(path, "*.mod", SearchOption.AllDirectories).Length;
             }
             catch
             {
@@ -215,8 +276,9 @@ namespace KenshiModManager.ViewModels
         {
             var dialog = new OpenFileDialog
             {
-                Title = "Select Kenshi executable (kenshi_x64.exe or kenshi.exe)",
-                Filter = "Kenshi Executable|kenshi_x64.exe;kenshi.exe",
+                Title = "Select Kenshi executable (any .exe file in Kenshi folder)",
+                Filter = "All Executables (*.exe)|*.exe|Kenshi Executable|kenshi_x64.exe;kenshi.exe",
+                FilterIndex = 1,
                 CheckFileExists = true
             };
 

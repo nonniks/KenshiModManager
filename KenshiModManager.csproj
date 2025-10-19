@@ -9,14 +9,21 @@
     <ApplicationIcon>Resources\app.ico</ApplicationIcon>
 
     <!-- Application metadata -->
-    <Version>1.0.0</Version>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
+    <Version>1.0.1</Version>
+    <AssemblyVersion>1.0.1.0</AssemblyVersion>
+    <FileVersion>1.0.1.0</FileVersion>
     <Company>KenshiTR</Company>
     <Product>Kenshi Mod Manager</Product>
     <Authors>KenshiTR</Authors>
     <Description>Modern mod manager for Kenshi with playset management</Description>
     <Copyright>Copyright © 2025</Copyright>
+
+    <!-- Publish optimization settings -->
+    <SatelliteResourceLanguages>en-US;ru</SatelliteResourceLanguages>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <PublishTrimmed>false</PublishTrimmed>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,5 +36,38 @@
     <Resource Include="Resources\app.ico" />
     <Resource Include="Resources\app.png" />
   </ItemGroup>
+
+  <!-- Post-publish: Move satellite assemblies to locales folder and remove debug files -->
+  <Target Name="OrganizePublishFiles" AfterTargets="Publish">
+    <!-- Create locales directory -->
+    <MakeDir Directories="$(PublishDir)locales\en" Condition="Exists('$(PublishDir)en')" />
+    <MakeDir Directories="$(PublishDir)locales\ru" Condition="Exists('$(PublishDir)ru')" />
+
+    <!-- Move English resources -->
+    <ItemGroup>
+      <EnResources Include="$(PublishDir)en\**\*.*" />
+    </ItemGroup>
+    <Move SourceFiles="@(EnResources)" DestinationFolder="$(PublishDir)locales\en\%(RecursiveDir)" Condition="Exists('$(PublishDir)en')" />
+    <RemoveDir Directories="$(PublishDir)en" Condition="Exists('$(PublishDir)en')" />
+
+    <!-- Move Russian resources -->
+    <ItemGroup>
+      <RuResources Include="$(PublishDir)ru\**\*.*" />
+    </ItemGroup>
+    <Move SourceFiles="@(RuResources)" DestinationFolder="$(PublishDir)locales\ru\%(RecursiveDir)" Condition="Exists('$(PublishDir)ru')" />
+    <RemoveDir Directories="$(PublishDir)ru" Condition="Exists('$(PublishDir)ru')" />
+
+    <!-- Remove createdump.exe if exists -->
+    <Delete Files="$(PublishDir)createdump.exe" Condition="Exists('$(PublishDir)createdump.exe')" />
+
+    <!-- Remove any remaining .pdb files -->
+    <ItemGroup>
+      <PdbFiles Include="$(PublishDir)**\*.pdb" />
+    </ItemGroup>
+    <Delete Files="@(PdbFiles)" />
+
+    <Message Text="✓ Locales moved to locales/ folder" Importance="high" />
+    <Message Text="✓ Debug files removed" Importance="high" />
+  </Target>
 
 </Project>

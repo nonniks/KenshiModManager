@@ -33,7 +33,10 @@
                     <TextBox Text="{Binding KenshiPath, UpdateSourceTrigger=PropertyChanged}"
                              IsReadOnly="True"
                              Background="#1E1E1E" Foreground="#CCCCCC" BorderBrush="#3E3E42"
-                             Padding="8" Margin="0,10,0,10" FontSize="13"/>
+                             Padding="8" Margin="0,10,0,5" FontSize="13"/>
+
+                    <TextBlock Text="{Binding KenshiPathStatus}"
+                               FontSize="11" Foreground="#808080" Margin="5,0,0,10"/>
 
                     <Button Content="Browse..." Command="{Binding BrowseKenshiPathCommand}"
                             Background="#3E3E42" Foreground="#CCCCCC" BorderBrush="#555555"
@@ -68,7 +71,10 @@
                     <TextBox Text="{Binding ModsPath, UpdateSourceTrigger=PropertyChanged}"
                              IsReadOnly="True"
                              Background="#1E1E1E" Foreground="#CCCCCC" BorderBrush="#3E3E42"
-                             Padding="8" Margin="0,10,0,10" FontSize="13"/>
+                             Padding="8" Margin="0,10,0,5" FontSize="13"/>
+
+                    <TextBlock Text="{Binding ModsPathStatus}"
+                               FontSize="11" Foreground="#808080" Margin="5,0,0,10"/>
 
                     <Button Content="Browse..." Command="{Binding BrowseModsPathCommand}"
                             Background="#3E3E42" Foreground="#CCCCCC" BorderBrush="#555555"
@@ -103,7 +109,10 @@
                     <TextBox Text="{Binding WorkshopPath, UpdateSourceTrigger=PropertyChanged}"
                              IsReadOnly="True"
                              Background="#1E1E1E" Foreground="#CCCCCC" BorderBrush="#3E3E42"
-                             Padding="8" Margin="0,10,0,10" FontSize="13"/>
+                             Padding="8" Margin="0,10,0,5" FontSize="13"/>
+
+                    <TextBlock Text="{Binding WorkshopPathStatus}"
+                               FontSize="11" Foreground="#808080" Margin="5,0,0,10"/>
 
                     <Button Content="Browse..." Command="{Binding BrowseWorkshopPathCommand}"
                             Background="#3E3E42" Foreground="#CCCCCC" BorderBrush="#555555"
