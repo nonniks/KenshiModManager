@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <item>
-  <version>1.0.1</version>
+  <version>1.0.1.0</version>
   <url>https://github.com/nonniks/KenshiModManager/releases/download/1.0.1/KMM_portable_v1.0.1.zip</url>
-  <changelog>
-    <![CDATA[
-    <h2>Version 1.0.1 - UX Improvements</h2>
-    <ul>
-      <li>Improved path selection: now shows all .exe files</li>
-      <li>Recursive mod search in subfolders</li>
-      <li>Added detailed status messages for validation</li>
-      <li>Fixed path browsing issues reported by users</li>
-    </ul>
-    ]]>
-  </changelog>
   <mandatory>false</mandatory>
 </item>
