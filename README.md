@@ -1,6 +1,16 @@
-# Kenshi Mod Manager
+# Kenshi Mod Manager 
 
-Modern mod manager for Kenshi with playset management system.
+<p align="center">
+  <a href="https://buymeacoffee.com/aze4ka" target="_blank"><img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-donate-yellow.svg?style=for-the-badge&logo=buymeacoffee" alt="Buy Me a Coffee"></a>
+  <a href="https://discord.gg/crejEqVXbD" target="_blank"><img src="https://img.shields.io/badge/Discord-join-7289DA.svg?style=for-the-badge&logo=discord" alt="Discord"></a>
+  <a href="https://boosty.to/eventmanagerbot/donate" target="_blank"><img src="https://img.shields.io/badge/Boosty-support-orange.svg?style=for-the-badge&logo=boosty" alt="Boosty"></a>
+</p>
+
+
+Modern mod manager for Kenshi with playset management system. Inspired by Paradox Launcher.
+
+<img width="1578" height="886" alt="image" src="https://github.com/user-attachments/assets/0f01733c-4c87-4099-b270-2a29233a7627" />
+
 
 ## Features
 
@@ -63,7 +73,7 @@ Output will be in `bin\Release\net9.0-windows\win-x64\publish\`
 
 ## License
 
-MIT License - See LICENSE file for details
+MIT License - See [LICENSE](https://github.com/nonniks/KenshiModManager/blob/master/LICENSE) file for details
 
 ## Support
 
