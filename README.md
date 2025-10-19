@@ -1,6 +1,9 @@
 # Kenshi Mod Manager
 
-Modern mod manager for Kenshi with playset management system.
+Modern mod manager for Kenshi with playset management system. Inspired by Paradox Launcher.
+
+<img width="1578" height="886" alt="image" src="https://github.com/user-attachments/assets/0f01733c-4c87-4099-b270-2a29233a7627" />
+
 
 ## Features
 
