@@ -1,8 +1,11 @@
 using System;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Windows.Input;
 using KenshiModManager.Commands;
 using KenshiModManager.Core;
+using KenshiModManager.Properties;
 using KenshiLib.Core;
 using Microsoft.Win32;
 using Ookii.Dialogs.Wpf;
@@ -29,6 +32,8 @@ namespace KenshiModManager.ViewModels
         private string _kenshiPathStatus = string.Empty;
         private string _modsPathStatus = string.Empty;
         private string _workshopPathStatus = string.Empty;
+        private string _selectedLanguage = string.Empty;
+        private LanguageOption? _selectedLanguageOption;
 
         public SettingsViewModel(AppSettings appSettings)
         {
@@ -39,6 +44,15 @@ namespace KenshiModManager.ViewModels
             BrowseWorkshopPathCommand = new RelayCommand(BrowseWorkshopPath);
             ResetToAutoDetectCommand = new RelayCommand(ResetToAutoDetect);
             SaveSettingsCommand = new RelayCommand(SaveSettings);
+            AvailableLanguages = new ObservableCollection<LanguageOption>
+            {
+                new() { Code = "en", DisplayName = "English" },
+                new() { Code = "ru", DisplayName = "Русский" },
+                new() { Code = "pt", DisplayName = "Português" }
+            };
+
+            string currentLang = LocalizationManager.GetCurrentLanguage();
+            SelectedLanguageOption = AvailableLanguages.FirstOrDefault(l => l.Code == currentLang);
 
             LoadPaths();
         }
@@ -153,6 +167,32 @@ namespace KenshiModManager.ViewModels
         public ICommand BrowseWorkshopPathCommand { get; }
         public ICommand ResetToAutoDetectCommand { get; }
         public ICommand SaveSettingsCommand { get; }
+
+        public string SelectedLanguage
+        {
+            get => _selectedLanguage;
+            set
+            {
+                if (SetProperty(ref _selectedLanguage, value))
+                {
+                    LocalizationManager.ChangeLanguage(value, _appSettings);
+                }
+            }
+        }
+
+        public LanguageOption? SelectedLanguageOption
+        {
+            get => _selectedLanguageOption;
+            set
+            {
+                if (SetProperty(ref _selectedLanguageOption, value) && value != null)
+                {
+                    LocalizationManager.ChangeLanguage(value.Code, _appSettings);
+                }
+            }
+        }
+
+        public ObservableCollection<LanguageOption> AvailableLanguages { get; }
 
         private void LoadPaths()
         {
@@ -486,6 +526,14 @@ namespace KenshiModManager.ViewModels
             }
 
             Console.WriteLine("[SettingsViewModel] Settings saved");
+        }
+
+        public class LanguageOption
+        {
+            public string Code { get; set; } = string.Empty;
+            public string DisplayName { get; set; } = string.Empty;
+
+            public override string ToString() => DisplayName;
         }
     }
 }

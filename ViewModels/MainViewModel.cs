@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using KenshiModManager.Commands;
 using KenshiModManager.Core;
+using KenshiModManager.Properties;
 using KenshiLib.Core;
 
 namespace KenshiModManager.ViewModels
