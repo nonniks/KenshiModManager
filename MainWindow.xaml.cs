@@ -19,6 +19,8 @@ public partial class MainWindow : Window
     {
         if (DataContext is MainViewModel viewModel)
         {
+            viewModel.SettingsTabViewModel.ValidateAllPaths();
+
             if (viewModel.RefreshModsCommand.CanExecute(null))
             {
                 viewModel.RefreshModsCommand.Execute(null);

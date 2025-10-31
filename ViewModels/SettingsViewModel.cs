@@ -1,8 +1,11 @@
 using System;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Windows.Input;
 using KenshiModManager.Commands;
 using KenshiModManager.Core;
+using KenshiModManager.Properties;
 using KenshiLib.Core;
 using Microsoft.Win32;
 using Ookii.Dialogs.Wpf;
@@ -29,6 +32,8 @@ namespace KenshiModManager.ViewModels
         private string _kenshiPathStatus = string.Empty;
         private string _modsPathStatus = string.Empty;
         private string _workshopPathStatus = string.Empty;
+        private string _selectedLanguage = string.Empty;
+        private LanguageOption? _selectedLanguageOption;
 
         public SettingsViewModel(AppSettings appSettings)
         {
@@ -39,6 +44,15 @@ namespace KenshiModManager.ViewModels
             BrowseWorkshopPathCommand = new RelayCommand(BrowseWorkshopPath);
             ResetToAutoDetectCommand = new RelayCommand(ResetToAutoDetect);
             SaveSettingsCommand = new RelayCommand(SaveSettings);
+            AvailableLanguages = new ObservableCollection<LanguageOption>
+            {
+                new() { Code = "en", DisplayName = "English" },
+                new() { Code = "ru", DisplayName = "Русский" },
+                new() { Code = "pt", DisplayName = "Português" }
+            };
+
+            string currentLang = LocalizationManager.GetCurrentLanguage();
+            SelectedLanguageOption = AvailableLanguages.FirstOrDefault(l => l.Code == currentLang);
 
             LoadPaths();
         }
@@ -46,19 +60,40 @@ namespace KenshiModManager.ViewModels
         public string KenshiPath
         {
             get => _kenshiPath;
-            set => SetProperty(ref _kenshiPath, value);
+            set
+            {
+                if (SetProperty(ref _kenshiPath, value))
+                {
+                    ValidateAllPaths();
+                    PersistSettings();
+                }
+            }
         }
 
         public string ModsPath
         {
             get => _modsPath;
-            set => SetProperty(ref _modsPath, value);
+            set
+            {
+                if (SetProperty(ref _modsPath, value))
+                {
+                    ValidateAllPaths();
+                    PersistSettings();
+                }
+            }
         }
 
         public string WorkshopPath
         {
             get => _workshopPath;
-            set => SetProperty(ref _workshopPath, value);
+            set
+            {
+                if (SetProperty(ref _workshopPath, value))
+                {
+                    ValidateAllPaths();
+                    PersistSettings();
+                }
+            }
         }
 
         public bool IsKenshiPathValid
@@ -133,6 +168,32 @@ namespace KenshiModManager.ViewModels
         public ICommand ResetToAutoDetectCommand { get; }
         public ICommand SaveSettingsCommand { get; }
 
+        public string SelectedLanguage
+        {
+            get => _selectedLanguage;
+            set
+            {
+                if (SetProperty(ref _selectedLanguage, value))
+                {
+                    LocalizationManager.ChangeLanguage(value, _appSettings);
+                }
+            }
+        }
+
+        public LanguageOption? SelectedLanguageOption
+        {
+            get => _selectedLanguageOption;
+            set
+            {
+                if (SetProperty(ref _selectedLanguageOption, value) && value != null)
+                {
+                    LocalizationManager.ChangeLanguage(value.Code, _appSettings);
+                }
+            }
+        }
+
+        public ObservableCollection<LanguageOption> AvailableLanguages { get; }
+
         private void LoadPaths()
         {
             if (!string.IsNullOrEmpty(_appSettings.CustomKenshiPath))
@@ -171,20 +232,20 @@ namespace KenshiModManager.ViewModels
             ValidateAllPaths();
         }
 
-        private void ValidateAllPaths()
+        public void ValidateAllPaths()
         {
             IsKenshiPathValid = ValidateKenshiPath(KenshiPath);
             if (IsKenshiPathValid)
             {
-                KenshiPathStatus = "✓ Valid - Kenshi installation found";
+                KenshiPathStatus = Resources.SettingsValidation_KenshiValid;
             }
             else if (string.IsNullOrEmpty(KenshiPath))
             {
-                KenshiPathStatus = "⚠ Path not set";
+                KenshiPathStatus = Resources.SettingsValidation_PathNotSet;
             }
             else
             {
-                KenshiPathStatus = "✗ Invalid - kenshi_x64.exe or kenshi.exe not found";
+                KenshiPathStatus = Resources.SettingsValidation_KenshiInvalid;
             }
 
             IsModsPathValid = ValidateModsPath(ModsPath);
@@ -193,22 +254,22 @@ namespace KenshiModManager.ViewModels
                 ModsCount = CountMods(ModsPath);
                 if (ModsCount > 0)
                 {
-                    ModsPathStatus = $"✓ Valid - Found {ModsCount} mod(s)";
+                    ModsPathStatus = string.Format(Resources.SettingsValidation_ModsValid, ModsCount);
                 }
                 else
                 {
-                    ModsPathStatus = "⚠ Valid folder, but no .mod files found";
+                    ModsPathStatus = Resources.SettingsValidation_ModsValidNoMods;
                 }
             }
             else if (string.IsNullOrEmpty(ModsPath))
             {
                 ModsCount = 0;
-                ModsPathStatus = "⚠ Path not set";
+                ModsPathStatus = Resources.SettingsValidation_PathNotSet;
             }
             else
             {
                 ModsCount = 0;
-                ModsPathStatus = "✗ Invalid - Folder does not exist";
+                ModsPathStatus = Resources.SettingsValidation_FolderNotExists;
             }
 
             IsWorkshopPathValid = ValidateWorkshopPath(WorkshopPath);
@@ -217,22 +278,22 @@ namespace KenshiModManager.ViewModels
                 WorkshopModsCount = CountMods(WorkshopPath);
                 if (WorkshopModsCount > 0)
                 {
-                    WorkshopPathStatus = $"✓ Valid - Found {WorkshopModsCount} mod(s)";
+                    WorkshopPathStatus = string.Format(Resources.SettingsValidation_ModsValid, WorkshopModsCount);
                 }
                 else
                 {
-                    WorkshopPathStatus = "⚠ Valid folder, but no .mod files found";
+                    WorkshopPathStatus = Resources.SettingsValidation_ModsValidNoMods;
                 }
             }
             else if (string.IsNullOrEmpty(WorkshopPath))
             {
                 WorkshopModsCount = 0;
-                WorkshopPathStatus = "⚠ Path not set";
+                WorkshopPathStatus = Resources.SettingsValidation_PathNotSet;
             }
             else
             {
                 WorkshopModsCount = 0;
-                WorkshopPathStatus = "✗ Invalid - Folder does not exist";
+                WorkshopPathStatus = Resources.SettingsValidation_FolderNotExists;
             }
 
             Console.WriteLine($"[SettingsViewModel] Validated paths: Kenshi={IsKenshiPathValid}, Mods={IsModsPathValid} ({ModsCount}), Workshop={IsWorkshopPathValid} ({WorkshopModsCount})");
@@ -240,11 +301,37 @@ namespace KenshiModManager.ViewModels
 
         private bool ValidateKenshiPath(string path)
         {
-            if (string.IsNullOrEmpty(path) || !Directory.Exists(path))
+            if (string.IsNullOrWhiteSpace(path) || !Directory.Exists(path))
                 return false;
 
-            return File.Exists(Path.Combine(path, "kenshi_x64.exe")) ||
-                   File.Exists(Path.Combine(path, "kenshi.exe"));
+            try
+            {
+                static int GetPriority(string fileName)
+                {
+                    if (fileName.Equals("kenshi_x64.exe", StringComparison.OrdinalIgnoreCase)) return 0;
+                    if (fileName.Equals("kenshi_GOG_x64.exe", StringComparison.OrdinalIgnoreCase)) return 1;
+                    if (fileName.StartsWith("kenshi", StringComparison.OrdinalIgnoreCase) &&
+                        fileName.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)) return 2;
+                    return 3;
+                }
+
+                var exe = Directory.EnumerateFiles(path, "kenshi*.exe")
+                    .Select(filePath => new FileInfo(filePath))
+                    .OrderBy(f => GetPriority(f.Name))
+                    .ThenByDescending(f => f.LastWriteTimeUtc)
+                    .FirstOrDefault();
+
+                if (exe == null)
+                    return false;
+
+                Console.WriteLine($"[SettingsViewModel] Detected Kenshi executable: {exe.Name}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[SettingsViewModel] Error detecting Kenshi executable: {ex.Message}");
+                return false;
+            }
         }
 
         private bool ValidateModsPath(string path)
@@ -272,12 +359,68 @@ namespace KenshiModManager.ViewModels
             }
         }
 
+        private void PersistSettings()
+        {
+            bool needsSave = false;
+
+            if (IsKenshiPathCustom && IsKenshiPathValid)
+            {
+                if (!string.Equals(_appSettings.CustomKenshiPath, KenshiPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    _appSettings.CustomKenshiPath = KenshiPath;
+                    needsSave = true;
+                    Console.WriteLine($"[SettingsViewModel] Will save CustomKenshiPath: {KenshiPath}");
+                }
+
+                if (!string.Equals(ModManager.KenshiPath, KenshiPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    ModManager.SetKenshiPath(KenshiPath);
+                }
+            }
+
+            if (IsModsPathCustom && IsModsPathValid)
+            {
+                if (!string.Equals(_appSettings.CustomModsPath, ModsPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    _appSettings.CustomModsPath = ModsPath;
+                    needsSave = true;
+                    Console.WriteLine($"[SettingsViewModel] Will save CustomModsPath: {ModsPath}");
+                }
+
+                if (!string.Equals(ModManager.gamedirModsPath, ModsPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    ModManager.SetModsPath(ModsPath);
+                }
+            }
+
+            if (IsWorkshopPathCustom && IsWorkshopPathValid)
+            {
+                if (!string.Equals(_appSettings.CustomWorkshopPath, WorkshopPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    _appSettings.CustomWorkshopPath = WorkshopPath;
+                    needsSave = true;
+                    Console.WriteLine($"[SettingsViewModel] Will save CustomWorkshopPath: {WorkshopPath}");
+                }
+
+                if (!string.Equals(ModManager.workshopModsPath, WorkshopPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    ModManager.SetWorkshopPath(WorkshopPath);
+                }
+            }
+
+            if (needsSave)
+            {
+                _appSettings.Save();
+                Console.WriteLine("[SettingsViewModel] Settings persisted");
+            }
+        }
+
         private void BrowseKenshiPath()
         {
             var dialog = new OpenFileDialog
             {
-                Title = "Select Kenshi executable (any .exe file in Kenshi folder)",
-                Filter = "All Executables (*.exe)|*.exe|Kenshi Executable|kenshi_x64.exe;kenshi.exe",
+                Title = Resources.FileDialog_SelectKenshiExe,
+                Filter = "Kenshi Executable (kenshi*.exe)|kenshi*.exe|All Executables (*.exe)|*.exe",
                 FilterIndex = 1,
                 CheckFileExists = true
             };
@@ -287,15 +430,13 @@ namespace KenshiModManager.ViewModels
                 var selectedPath = Path.GetDirectoryName(dialog.FileName);
                 if (!string.IsNullOrEmpty(selectedPath))
                 {
-                    KenshiPath = selectedPath;
                     IsKenshiPathCustom = true;
+                    KenshiPath = selectedPath;
 
                     if (!IsModsPathCustom)
                     {
                         ModsPath = Path.Combine(selectedPath, "mods");
                     }
-
-                    ValidateAllPaths();
                 }
             }
         }
@@ -304,7 +445,7 @@ namespace KenshiModManager.ViewModels
         {
             var dialog = new VistaFolderBrowserDialog
             {
-                Description = "Select Mods Folder",
+                Description = Resources.FileDialog_SelectModsFolder,
                 UseDescriptionForTitle = true
             };
 
@@ -313,9 +454,8 @@ namespace KenshiModManager.ViewModels
 
             if (dialog.ShowDialog() == true)
             {
-                ModsPath = dialog.SelectedPath;
                 IsModsPathCustom = true;
-                ValidateAllPaths();
+                ModsPath = dialog.SelectedPath;
             }
         }
 
@@ -323,7 +463,7 @@ namespace KenshiModManager.ViewModels
         {
             var dialog = new VistaFolderBrowserDialog
             {
-                Description = "Select Workshop Folder",
+                Description = Resources.FileDialog_SelectWorkshopFolder,
                 UseDescriptionForTitle = true
             };
 
@@ -332,9 +472,8 @@ namespace KenshiModManager.ViewModels
 
             if (dialog.ShowDialog() == true)
             {
-                WorkshopPath = dialog.SelectedPath;
                 IsWorkshopPathCustom = true;
-                ValidateAllPaths();
+                WorkshopPath = dialog.SelectedPath;
             }
         }
 
@@ -387,6 +526,14 @@ namespace KenshiModManager.ViewModels
             }
 
             Console.WriteLine("[SettingsViewModel] Settings saved");
+        }
+
+        public class LanguageOption
+        {
+            public string Code { get; set; } = string.Empty;
+            public string DisplayName { get; set; } = string.Empty;
+
+            public override string ToString() => DisplayName;
         }
     }
 }

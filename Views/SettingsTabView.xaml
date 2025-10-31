@@ -3,13 +3,28 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:properties="clr-namespace:KenshiModManager.Properties"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
              Background="#1E1E1E">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="20">
             <!-- Title -->
-            <TextBlock Text="Settings" FontSize="24" FontWeight="Bold" Foreground="#CCCCCC" Margin="0,0,0,20"/>
+            <TextBlock Text="{x:Static properties:Resources.SettingsTab_Title}" FontSize="24" FontWeight="Bold" Foreground="#CCCCCC" Margin="0,0,0,20"/>
+
+            <!-- Language Selection -->
+            <Border Background="#2D2D30" BorderBrush="#3E3E42" BorderThickness="1" Padding="15" Margin="0,0,0,15">
+                <StackPanel>
+                    <TextBlock Text="{x:Static properties:Resources.SettingsTab_Language}" FontSize="16" FontWeight="SemiBold" Foreground="#CCCCCC"/>
+
+                    <ComboBox Margin="0,10,0,0"
+                              Background="#1E1E1E" Foreground="#CCCCCC"
+                              BorderBrush="#3E3E42" Padding="10,5"
+                              ItemsSource="{Binding AvailableLanguages}"
+                              SelectedItem="{Binding SelectedLanguageOption}"
+                              HorizontalAlignment="Left" MinWidth="200"/>
+                </StackPanel>
+            </Border>
 
             <!-- Kenshi Installation Path -->
             <Border Background="#2D2D30" BorderBrush="#3E3E42" BorderThickness="1" Padding="15" Margin="0,0,0,15">
@@ -20,7 +35,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Grid.Column="0" Text="Kenshi Installation" FontSize="16" FontWeight="SemiBold" Foreground="#CCCCCC"/>
+                        <TextBlock Grid.Column="0" Text="{x:Static properties:Resources.SettingsTab_KenshiInstallation}" FontSize="16" FontWeight="SemiBold" Foreground="#CCCCCC"/>
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
                             <TextBlock Text="{Binding IsKenshiPathCustom, Converter={StaticResource BoolToStatusConverter}}"
                                        FontSize="12" Margin="0,0,10,0" VerticalAlignment="Center"/>
@@ -30,7 +45,7 @@
                         </StackPanel>
                     </Grid>
 
-                    <TextBox Text="{Binding KenshiPath, UpdateSourceTrigger=PropertyChanged}"
+                    <TextBox Text="{Binding KenshiPath, UpdateSourceTrigger=LostFocus}"
                              IsReadOnly="True"
                              Background="#1E1E1E" Foreground="#CCCCCC" BorderBrush="#3E3E42"
                              Padding="8" Margin="0,10,0,5" FontSize="13"/>
@@ -38,7 +53,7 @@
                     <TextBlock Text="{Binding KenshiPathStatus}"
                                FontSize="11" Foreground="#808080" Margin="5,0,0,10"/>
 
-                    <Button Content="Browse..." Command="{Binding BrowseKenshiPathCommand}"
+                    <Button Content="{x:Static properties:Resources.SettingsTab_Browse}" Command="{Binding BrowseKenshiPathCommand}"
                             Background="#3E3E42" Foreground="#CCCCCC" BorderBrush="#555555"
                             Padding="15,5" FontSize="13" HorizontalAlignment="Left"/>
                 </StackPanel>
@@ -54,7 +69,7 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Column="0" Orientation="Horizontal">
-                            <TextBlock Text="Mods Folder" FontSize="16" FontWeight="SemiBold" Foreground="#CCCCCC"/>
+                            <TextBlock Text="{x:Static properties:Resources.SettingsTab_ModsFolder}" FontSize="16" FontWeight="SemiBold" Foreground="#CCCCCC"/>
                             <TextBlock Text="{Binding ModsCount, StringFormat='({0} mods)'}"
                                        FontSize="13" Foreground="#808080" Margin="10,0,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
@@ -68,7 +83,7 @@
                         </StackPanel>
                     </Grid>
 
-                    <TextBox Text="{Binding ModsPath, UpdateSourceTrigger=PropertyChanged}"
+                    <TextBox Text="{Binding ModsPath, UpdateSourceTrigger=LostFocus}"
                              IsReadOnly="True"
                              Background="#1E1E1E" Foreground="#CCCCCC" BorderBrush="#3E3E42"
                              Padding="8" Margin="0,10,0,5" FontSize="13"/>
@@ -76,7 +91,7 @@
                     <TextBlock Text="{Binding ModsPathStatus}"
                                FontSize="11" Foreground="#808080" Margin="5,0,0,10"/>
 
-                    <Button Content="Browse..." Command="{Binding BrowseModsPathCommand}"
+                    <Button Content="{x:Static properties:Resources.SettingsTab_Browse}" Command="{Binding BrowseModsPathCommand}"
                             Background="#3E3E42" Foreground="#CCCCCC" BorderBrush="#555555"
                             Padding="15,5" FontSize="13" HorizontalAlignment="Left"/>
                 </StackPanel>
@@ -92,7 +107,7 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Column="0" Orientation="Horizontal">
-                            <TextBlock Text="Workshop Folder" FontSize="16" FontWeight="SemiBold" Foreground="#CCCCCC"/>
+                            <TextBlock Text="{x:Static properties:Resources.SettingsTab_WorkshopFolder}" FontSize="16" FontWeight="SemiBold" Foreground="#CCCCCC"/>
                             <TextBlock Text="{Binding WorkshopModsCount, StringFormat='({0} mods)'}"
                                        FontSize="13" Foreground="#808080" Margin="10,0,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
@@ -106,7 +121,7 @@
                         </StackPanel>
                     </Grid>
 
-                    <TextBox Text="{Binding WorkshopPath, UpdateSourceTrigger=PropertyChanged}"
+                    <TextBox Text="{Binding WorkshopPath, UpdateSourceTrigger=LostFocus}"
                              IsReadOnly="True"
                              Background="#1E1E1E" Foreground="#CCCCCC" BorderBrush="#3E3E42"
                              Padding="8" Margin="0,10,0,5" FontSize="13"/>
@@ -114,7 +129,7 @@
                     <TextBlock Text="{Binding WorkshopPathStatus}"
                                FontSize="11" Foreground="#808080" Margin="5,0,0,10"/>
 
-                    <Button Content="Browse..." Command="{Binding BrowseWorkshopPathCommand}"
+                    <Button Content="{x:Static properties:Resources.SettingsTab_Browse}" Command="{Binding BrowseWorkshopPathCommand}"
                             Background="#3E3E42" Foreground="#CCCCCC" BorderBrush="#555555"
                             Padding="15,5" FontSize="13" HorizontalAlignment="Left"/>
                 </StackPanel>
@@ -122,22 +137,10 @@
 
             <!-- Action Buttons -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-                <Button Content="Reset to Auto-Detect" Command="{Binding ResetToAutoDetectCommand}"
+                <Button Content="{x:Static properties:Resources.SettingsTab_ResetToAutoDetect}" Command="{Binding ResetToAutoDetectCommand}"
                         Background="#3E3E42" Foreground="#CCCCCC" BorderBrush="#555555"
-                        Padding="20,8" FontSize="13" Margin="0,0,10,0"/>
-
-                <Button Content="Save Settings" Command="{Binding SaveSettingsCommand}"
-                        Background="#007ACC" Foreground="White" BorderBrush="#005A9E"
-                        Padding="25,8" FontSize="13" FontWeight="SemiBold"/>
+                        Padding="20,8" FontSize="13"/>
             </StackPanel>
-
-            <!-- Future: Language Selection -->
-            <Border Background="#2D2D30" BorderBrush="#3E3E42" BorderThickness="1" Padding="15" Margin="0,20,0,0" Opacity="0.5">
-                <StackPanel>
-                    <TextBlock Text="Language" FontSize="16" FontWeight="SemiBold" Foreground="#CCCCCC"/>
-                    <TextBlock Text="Coming soon..." FontSize="12" Foreground="#808080" Margin="0,5,0,0"/>
-                </StackPanel>
-            </Border>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

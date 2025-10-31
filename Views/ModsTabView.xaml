@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:KenshiModManager.Views"
              xmlns:converters="clr-namespace:KenshiModManager.Converters"
+             xmlns:properties="clr-namespace:KenshiModManager.Properties"
              Background="#1E1E1E">
   <FrameworkElement.Resources>
     <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
@@ -154,7 +155,7 @@
         <ColumnDefinition Width="Auto"/>
       </Grid.ColumnDefinitions>
       <StackPanel Grid.Column="0" Orientation="Horizontal">
-        <TextBlock Text="MODS IN LOAD ORDER" FontSize="18" FontWeight="SemiBold" Foreground="White"
+        <TextBlock Text="{x:Static properties:Resources.ModsTab_Header}" FontSize="18" FontWeight="SemiBold" Foreground="White"
                    VerticalAlignment="Center"/>
         <TextBlock FontSize="14" Foreground="#999999" VerticalAlignment="Center" Margin="15,0,0,0"
                    Text="{Binding ActivePlaysetMods.Count, StringFormat='{}{0} mods'}"/>
@@ -217,7 +218,7 @@
                 <TextBlock FontSize="15" FontWeight="SemiBold" Foreground="White" TextTrimming="CharacterEllipsis"
                            Text="{Binding Name}"/>
                 <TextBlock FontSize="12" Foreground="#999999" Margin="0,3,0,0">
-                  <Run Text="Author:"/>
+                  <Run Text="{x:Static properties:Resources.ModsTab_AuthorLabel}"/>
                   <Run Foreground="#CCCCCC" Text="{Binding Author, Mode=OneWay}"/>
                 </TextBlock>
               </StackPanel>
@@ -228,10 +229,10 @@
                       Click="BurgerMenuButton_Click">
                 <FrameworkElement.ContextMenu>
                   <ContextMenu Style="{StaticResource DarkContextMenuStyle}">
-                    <MenuItem Header="🔗 Open in Steam Workshop" Style="{StaticResource NoIconMenuItemStyle}"
+                    <MenuItem Header="{x:Static properties:Resources.ModsTab_OpenInWorkshop}" Style="{StaticResource NoIconMenuItemStyle}"
                               Command="{Binding PlacementTarget.DataContext.DataContext.OpenInWorkshopCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                               CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
-                    <MenuItem Header="📁 Show in Folder" Style="{StaticResource NoIconMenuItemStyle}"
+                    <MenuItem Header="{x:Static properties:Resources.ModsTab_ShowInFolder}" Style="{StaticResource NoIconMenuItemStyle}"
                               Command="{Binding PlacementTarget.DataContext.DataContext.ShowInFolderCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                               CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
                   </ContextMenu>
@@ -257,7 +258,7 @@
               </Button>
               <Button Grid.Column="5" Content="✕" FontSize="16" Width="30" Height="30" VerticalAlignment="Center"
                       Margin="5,0,0,0" Background="Transparent" Foreground="#E74856" BorderThickness="0" Cursor="Hand"
-                      ToolTip="Remove from playset"
+                      ToolTip="{x:Static properties:Resources.ModsTab_RemoveTooltip}"
                       Command="{Binding DataContext.RemoveModCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                       CommandParameter="{Binding}">
                 <FrameworkElement.Style>
@@ -291,14 +292,14 @@
         <ColumnDefinition Width="Auto"/>
       </Grid.ColumnDefinitions>
       <TextBlock Grid.Column="0" VerticalAlignment="Center" Foreground="#999999" FontSize="12">
-        <Run Text="Drag mods to reorder"/>
+        <Run Text="{x:Static properties:Resources.ModsTab_DragToReorder}"/>
         <Run Text="  •  "/>
-        <Run Text="Click ⋯ for options"/>
+        <Run Text="{x:Static properties:Resources.ModsTab_ClickForOptions}"/>
       </TextBlock>
       <StackPanel Grid.Column="1" Orientation="Horizontal">
-        <Button Content="+ ADD MODS" Style="{StaticResource PrimaryButtonStyle}" MinWidth="150" Margin="0,0,10,0"
+        <Button Content="{x:Static properties:Resources.ModsTab_AddModsButton}" Style="{StaticResource PrimaryButtonStyle}" MinWidth="150" Margin="0,0,10,0"
                 Command="{Binding OpenAddModsWindowCommand}"/>
-        <Button Content="⟳ Refresh" Style="{StaticResource ModernButtonStyle}" MinWidth="100"
+        <Button Content="{x:Static properties:Resources.ModsTab_RefreshButton}" Style="{StaticResource ModernButtonStyle}" MinWidth="100"
                 Command="{Binding RefreshCommand}"/>
       </StackPanel>
     </Grid>
@@ -307,7 +308,7 @@
       <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
         <ProgressBar IsIndeterminate="True" Width="200" Height="4" Background="#2D2D30" Foreground="#0E639C"
                      BorderThickness="0"/>
-        <TextBlock Text="Loading mods..." Foreground="White" Margin="0,15,0,0" HorizontalAlignment="Center"
+        <TextBlock Text="{x:Static properties:Resources.ModsTab_LoadingMods}" Foreground="White" Margin="0,15,0,0" HorizontalAlignment="Center"
                    FontSize="14"/>
       </StackPanel>
     </Border>

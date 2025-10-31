@@ -77,6 +77,10 @@ namespace KenshiModManager.ViewModels
 
         public int SelectedCount => _availableMods.Count(m => m.IsSelected);
         public int TotalCount => _availableMods.Count;
+        public string SelectedCountText => string.Format(
+            Properties.Resources.AddModsWindow_SelectedCount,
+            SelectedCount,
+            TotalCount);
 
         public bool IsLoading
         {
@@ -152,7 +156,9 @@ namespace KenshiModManager.ViewModels
 
             ApplySort();
             OnPropertyChanged(nameof(SelectedCount));
+            OnPropertyChanged(nameof(SelectedCountText));
             OnPropertyChanged(nameof(TotalCount));
+            OnPropertyChanged(nameof(SelectedCountText));
         }
 
         private void ApplySort()
@@ -189,6 +195,7 @@ namespace KenshiModManager.ViewModels
                 mod.IsSelected = true;
             }
             OnPropertyChanged(nameof(SelectedCount));
+            OnPropertyChanged(nameof(SelectedCountText));
         }
 
         private void DeselectAll()
@@ -198,6 +205,7 @@ namespace KenshiModManager.ViewModels
                 mod.IsSelected = false;
             }
             OnPropertyChanged(nameof(SelectedCount));
+            OnPropertyChanged(nameof(SelectedCountText));
         }
 
         private bool CanAddSelectedMods()

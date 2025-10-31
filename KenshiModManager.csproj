@@ -9,9 +9,9 @@
     <ApplicationIcon>Resources\app.ico</ApplicationIcon>
 
     <!-- Application metadata -->
-    <Version>1.0.1</Version>
-    <AssemblyVersion>1.0.1.0</AssemblyVersion>
-    <FileVersion>1.0.1.0</FileVersion>
+    <Version>1.1.0</Version>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
     <Company>KenshiTR</Company>
     <Product>Kenshi Mod Manager</Product>
     <Authors>KenshiTR</Authors>
@@ -19,7 +19,7 @@
     <Copyright>Copyright © 2025</Copyright>
 
     <!-- Publish optimization settings -->
-    <SatelliteResourceLanguages>en-US;ru</SatelliteResourceLanguages>
+    <SatelliteResourceLanguages>en-US;ru;pt</SatelliteResourceLanguages>
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
     <PublishTrimmed>false</PublishTrimmed>
@@ -27,14 +27,35 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="KenshiLib" Version="1.0.0" />
+    <PackageReference Include="KenshiLib" Version="1.0.1" />
     <PackageReference Include="Autoupdater.NET.Official" Version="1.9.2" />
     <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
   </ItemGroup>
 
+  <!-- <ItemGroup>
+    <ProjectReference Include="..\KenshiLib\KenshiLib.csproj" />
+  </ItemGroup> -->
+
   <ItemGroup>
     <Resource Include="Resources\app.ico" />
     <Resource Include="Resources\app.png" />
+  </ItemGroup>
+
+  <!-- Enable resource code generation -->
+  <ItemGroup>
+    <Compile Remove="Properties\Resources.Designer.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
   <!-- Post-publish: Move satellite assemblies to locales folder and remove debug files -->
@@ -42,6 +63,7 @@
     <!-- Create locales directory -->
     <MakeDir Directories="$(PublishDir)locales\en" Condition="Exists('$(PublishDir)en')" />
     <MakeDir Directories="$(PublishDir)locales\ru" Condition="Exists('$(PublishDir)ru')" />
+    <MakeDir Directories="$(PublishDir)locales\pt" Condition="Exists('$(PublishDir)pt')" />
 
     <!-- Move English resources -->
     <ItemGroup>
@@ -56,6 +78,13 @@
     </ItemGroup>
     <Move SourceFiles="@(RuResources)" DestinationFolder="$(PublishDir)locales\ru\%(RecursiveDir)" Condition="Exists('$(PublishDir)ru')" />
     <RemoveDir Directories="$(PublishDir)ru" Condition="Exists('$(PublishDir)ru')" />
+
+    <!-- Move Portuguese resources -->
+    <ItemGroup>
+      <PtResources Include="$(PublishDir)pt\**\*.*" />
+    </ItemGroup>
+    <Move SourceFiles="@(PtResources)" DestinationFolder="$(PublishDir)locales\pt\%(RecursiveDir)" Condition="Exists('$(PublishDir)pt')" />
+    <RemoveDir Directories="$(PublishDir)pt" Condition="Exists('$(PublishDir)pt')" />
 
     <!-- Remove createdump.exe if exists -->
     <Delete Files="$(PublishDir)createdump.exe" Condition="Exists('$(PublishDir)createdump.exe')" />

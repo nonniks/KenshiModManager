@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using KenshiModManager.Commands;
 using KenshiModManager.Core;
+using KenshiModManager.Properties;
 using KenshiLib.Core;
 
 namespace KenshiModManager.ViewModels
@@ -37,7 +38,47 @@ namespace KenshiModManager.ViewModels
 
             _reverseEngineer = new ReverseEngineer();
             _modManager = new ModManager(_reverseEngineer);
+
+            // Try to get path from ModManager autodetect first
             _kenshiPath = ModManager.KenshiPath ?? string.Empty;
+
+            // If autodetect failed but we have custom settings, validate and use those
+            if (string.IsNullOrEmpty(_kenshiPath) && !string.IsNullOrEmpty(_appSettings.CustomKenshiPath))
+            {
+                var customPath = _appSettings.CustomKenshiPath;
+
+                // Validate custom path before applying
+                if (Directory.Exists(customPath) &&
+                    Directory.EnumerateFiles(customPath, "kenshi*.exe").Any())
+                {
+                    Console.WriteLine("[MainViewModel] Autodetect failed, using CustomKenshiPath from AppSettings");
+                    _kenshiPath = customPath;
+                    ModManager.SetKenshiPath(_kenshiPath);
+
+                    // Also set custom workshop and mods paths if available and valid
+                    if (!string.IsNullOrEmpty(_appSettings.CustomWorkshopPath) &&
+                        Directory.Exists(_appSettings.CustomWorkshopPath))
+                    {
+                        ModManager.SetWorkshopPath(_appSettings.CustomWorkshopPath);
+                        Console.WriteLine($"[MainViewModel] Set custom workshop path: {_appSettings.CustomWorkshopPath}");
+                    }
+
+                    if (!string.IsNullOrEmpty(_appSettings.CustomModsPath) &&
+                        Directory.Exists(_appSettings.CustomModsPath))
+                    {
+                        ModManager.SetModsPath(_appSettings.CustomModsPath);
+                        Console.WriteLine($"[MainViewModel] Set custom mods path: {_appSettings.CustomModsPath}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("[MainViewModel] WARNING: CustomKenshiPath from AppSettings is invalid or exe not found");
+                }
+            }
+            else if (!string.IsNullOrEmpty(_kenshiPath))
+            {
+                Console.WriteLine($"[MainViewModel] Autodetect succeeded: {_kenshiPath}");
+            }
 
             if (!string.IsNullOrEmpty(_kenshiPath))
             {
@@ -46,12 +87,27 @@ namespace KenshiModManager.ViewModels
             }
             else
             {
+                Console.WriteLine("[MainViewModel] WARNING: No Kenshi path available - playset operations will be disabled");
                 _playsetRepository = null!;
                 _gameLauncher = null!;
             }
 
             _playsets = new ObservableCollection<PlaysetInfo>();
-            _statusMessage = "Ready";
+
+            // Set initial status message - show warning if autodetect failed
+            if (string.IsNullOrEmpty(_kenshiPath))
+            {
+                _statusMessage = Resources.Warning_AutoDetectFailed;
+                _statusSeverity = "Warning";
+                _showSettingsAction = true;
+                Console.WriteLine("[MainViewModel] Showing autodetect failed warning to user");
+            }
+            else
+            {
+                _statusMessage = Resources.Status_Ready;
+                _statusSeverity = "Info";
+                _showSettingsAction = false;
+            }
 
             LaunchGameCommand = new AsyncRelayCommand(LaunchGameAsync, CanLaunchGame);
             RefreshModsCommand = new AsyncRelayCommand(RefreshModsAsync);
@@ -64,6 +120,7 @@ namespace KenshiModManager.ViewModels
             ImportPlaysetCommand = new AsyncRelayCommand(ImportPlaysetAsync);
             SwitchPlaysetCommand = new AsyncRelayCommand<PlaysetInfo>(SwitchPlaysetAsync);
             SaveCurrentPlaysetCommand = new AsyncRelayCommand(SaveCurrentPlaysetAsync);
+            OpenSettingsCommand = new RelayCommand(OpenSettings);
 
             ModsTabViewModel = new ModsTabViewModel(_modManager);
             SettingsTabViewModel = new SettingsViewModel(_appSettings);
@@ -77,6 +134,7 @@ namespace KenshiModManager.ViewModels
             {
                 Interval = TimeSpan.FromSeconds(2)
             };
+
             _gameMonitorTimer.Tick += GameMonitorTimer_Tick;
             _gameMonitorTimer.Start();
 
@@ -112,6 +170,20 @@ namespace KenshiModManager.ViewModels
         {
             get => _statusMessage;
             set => SetProperty(ref _statusMessage, value);
+        }
+
+        private string _statusSeverity = "Info";
+        public string StatusSeverity
+        {
+            get => _statusSeverity;
+            set => SetProperty(ref _statusSeverity, value);
+        }
+
+        private bool _showSettingsAction;
+        public bool ShowSettingsAction
+        {
+            get => _showSettingsAction;
+            set => SetProperty(ref _showSettingsAction, value);
         }
 
         public ObservableCollection<PlaysetInfo> Playsets
@@ -161,6 +233,7 @@ namespace KenshiModManager.ViewModels
         public ICommand ImportPlaysetCommand { get; }
         public ICommand SwitchPlaysetCommand { get; }
         public ICommand SaveCurrentPlaysetCommand { get; }
+        public ICommand OpenSettingsCommand { get; }
 
         #endregion
 
@@ -178,7 +251,7 @@ namespace KenshiModManager.ViewModels
         {
             try
             {
-                StatusMessage = "Preparing to launch Kenshi...";
+                StatusMessage = Resources.Status_PreparingLaunch;
 
                 await SaveCurrentPlaysetAsync();
 
@@ -192,7 +265,7 @@ namespace KenshiModManager.ViewModels
                 File.WriteAllLines(modsConfigPath, enabledMods);
                 Console.WriteLine($"[MainViewModel] Wrote {enabledMods.Count} ENABLED mods to mods.cfg for launch (total in playset: {ModsTabViewModel.ActivePlaysetMods.Count})");
 
-                StatusMessage = "Launching Kenshi...";
+                StatusMessage = Resources.Status_Launching;
 
                 await Task.Run(() =>
                 {
@@ -201,11 +274,11 @@ namespace KenshiModManager.ViewModels
                     if (success)
                     {
                         IsGameRunning = true;
-                        StatusMessage = "Kenshi is running...";
+                        StatusMessage = Resources.Status_GameRunning;
                     }
                     else
                     {
-                        StatusMessage = "Failed to launch Kenshi";
+                        StatusMessage = Resources.Status_LaunchFailed;
                     }
                 });
 
@@ -213,7 +286,7 @@ namespace KenshiModManager.ViewModels
             }
             catch (Exception ex)
             {
-                StatusMessage = $"Error launching game: {ex.Message}";
+                StatusMessage = string.Format(Resources.Status_LaunchError, ex.Message);
                 Console.WriteLine($"[MainViewModel] Error launching game: {ex}");
             }
         }
@@ -222,16 +295,16 @@ namespace KenshiModManager.ViewModels
         {
             try
             {
-                StatusMessage = "Refreshing mods...";
+                StatusMessage = Resources.Status_RefreshingMods;
 
                 await ModsTabViewModel.LoadModsAsync();
 
                 ActiveModsCount = ModsTabViewModel.ActivePlaysetMods.Count;
-                StatusMessage = $"Loaded {ModsTabViewModel.AllMods.Count} mods, {ActiveModsCount} active";
+                StatusMessage = string.Format(Resources.Status_ModsLoaded, ModsTabViewModel.AllMods.Count, ActiveModsCount);
             }
             catch (Exception ex)
             {
-                StatusMessage = $"Error refreshing mods: {ex.Message}";
+                StatusMessage = string.Format(Resources.Status_RefreshError, ex.Message);
                 Console.WriteLine($"[MainViewModel] Error refreshing mods: {ex}");
             }
         }
@@ -249,12 +322,19 @@ namespace KenshiModManager.ViewModels
 
                     if (wasRunning && !isCurrentlyRunning)
                     {
-                        StatusMessage = "Kenshi has been closed";
+                        StatusMessage = Resources.Status_GameClosed;
                     }
 
                     ((AsyncRelayCommand)LaunchGameCommand).RaiseCanExecuteChanged();
                 }
             }
+        }
+
+        private void OpenSettings()
+        {
+            ShowSettingsAction = false;
+            StatusSeverity = "Info";
+            Console.WriteLine("[MainViewModel] OpenSettings command triggered");
         }
 
         #endregion
@@ -369,12 +449,12 @@ namespace KenshiModManager.ViewModels
                     ModsTabViewModel.FilteredPlaysetMods.Clear();
 
                     SelectedPlayset = playset;
-                    StatusMessage = $"Created empty playset: {playset.Name}";
+                    StatusMessage = string.Format(Resources.Status_PlaysetCreated, playset.Name);
                 }
             }
             catch (Exception ex)
             {
-                StatusMessage = $"Error creating playset: {ex.Message}";
+                StatusMessage = string.Format(Resources.Status_PlaysetCreateError, ex.Message);
                 Console.WriteLine($"[MainViewModel] Error creating playset: {ex}");
             }
 
@@ -399,8 +479,8 @@ namespace KenshiModManager.ViewModels
             try
             {
                 var dialog = new Views.InputDialog(
-                    "Rename Playset",
-                    "Enter new playset name:",
+                    Resources.Dialog_RenamePlayset,
+                    Resources.Dialog_EnterPlaysetName,
                     playset.Name);
 
                 if (dialog.ShowDialog() == true)
@@ -409,7 +489,7 @@ namespace KenshiModManager.ViewModels
 
                     if (newName == playset.Name)
                     {
-                        StatusMessage = "Name unchanged";
+                        StatusMessage = Resources.Status_NameUnchanged;
                         return;
                     }
 
@@ -429,12 +509,12 @@ namespace KenshiModManager.ViewModels
                             }
                         }
 
-                        StatusMessage = $"Renamed playset to: {newName}";
+                        StatusMessage = string.Format(Resources.Status_PlaysetRenamed, newName);
                         Console.WriteLine($"[MainViewModel] Successfully renamed playset to: {newName}");
                     }
                     else
                     {
-                        StatusMessage = "Failed to rename playset - name may already exist";
+                        StatusMessage = Resources.Status_RenameFailedNameExists;
                         Console.WriteLine($"[MainViewModel] Failed to rename playset - name may already exist");
                     }
                 }
@@ -445,7 +525,7 @@ namespace KenshiModManager.ViewModels
             }
             catch (Exception ex)
             {
-                StatusMessage = $"Error renaming playset: {ex.Message}";
+                StatusMessage = string.Format(Resources.Status_RenameError, ex.Message);
                 Console.WriteLine($"[MainViewModel] Error renaming playset: {ex}");
             }
 
@@ -464,12 +544,12 @@ namespace KenshiModManager.ViewModels
                 if (duplicate != null)
                 {
                     Playsets.Add(duplicate);
-                    StatusMessage = $"Duplicated playset: {duplicate.Name}";
+                    StatusMessage = string.Format(Resources.Status_PlaysetDuplicated, duplicate.Name);
                 }
             }
             catch (Exception ex)
             {
-                StatusMessage = $"Error duplicating playset: {ex.Message}";
+                StatusMessage = string.Format(Resources.Status_DuplicateError, ex.Message);
                 Console.WriteLine($"[MainViewModel] Error duplicating playset: {ex}");
             }
 
@@ -484,12 +564,12 @@ namespace KenshiModManager.ViewModels
             try
             {
                 string message = playset.IsActive
-                    ? $"Playset '{playset.Name}' is currently ACTIVE.\n\nAre you sure you want to delete it? This action cannot be undone."
-                    : $"Are you sure you want to delete playset '{playset.Name}'?\n\nThis action cannot be undone.";
+                    ? string.Format(Resources.DeleteConfirm_ActivePlayset, playset.Name)
+                    : string.Format(Resources.DeleteConfirm_InactivePlayset, playset.Name);
 
                 var result = System.Windows.MessageBox.Show(
                     message,
-                    "Confirm Delete",
+                    Resources.Dialog_ConfirmDelete,
                     System.Windows.MessageBoxButton.YesNo,
                     System.Windows.MessageBoxImage.Warning,
                     System.Windows.MessageBoxResult.No);
@@ -509,19 +589,19 @@ namespace KenshiModManager.ViewModels
                     if (_playsetRepository.DeletePlayset(playset.FilePath))
                     {
                         Playsets.Remove(playset);
-                        StatusMessage = $"Deleted playset: {playset.Name}";
+                        StatusMessage = string.Format(Resources.Status_PlaysetDeleted, playset.Name);
                         Console.WriteLine($"[MainViewModel] Successfully deleted playset: {playset.Name}");
                     }
                     else
                     {
-                        StatusMessage = $"Failed to delete playset: {playset.Name}";
+                        StatusMessage = string.Format(Resources.Status_DeleteFailed, playset.Name);
                         Console.WriteLine($"[MainViewModel] Failed to delete playset file: {playset.FilePath}");
                     }
                 }
             }
             catch (Exception ex)
             {
-                StatusMessage = $"Error deleting playset: {ex.Message}";
+                StatusMessage = string.Format(Resources.Status_DeleteError, ex.Message);
                 Console.WriteLine($"[MainViewModel] Error deleting playset: {ex}");
             }
 
@@ -537,8 +617,8 @@ namespace KenshiModManager.ViewModels
             {
                 var saveFileDialog = new Microsoft.Win32.SaveFileDialog
                 {
-                    Title = "Export Playset",
-                    Filter = "Configuration Files (*.cfg)|*.cfg|All Files (*.*)|*.*",
+                    Title = Resources.Dialog_ExportPlayset,
+                    Filter = Resources.FileDialog_ConfigFilter,
                     DefaultExt = ".cfg",
                     FileName = playset.Name,
                     InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
@@ -550,13 +630,13 @@ namespace KenshiModManager.ViewModels
 
                     if (_playsetRepository.ExportPlayset(playset.FilePath, destinationPath))
                     {
-                        StatusMessage = $"Exported playset to: {destinationPath}";
+                        StatusMessage = string.Format(Resources.Status_PlaysetExported, destinationPath);
                     }
                 }
             }
             catch (Exception ex)
             {
-                StatusMessage = $"Error exporting playset: {ex.Message}";
+                StatusMessage = string.Format(Resources.Status_ExportError, ex.Message);
                 Console.WriteLine($"[MainViewModel] Error exporting playset: {ex}");
             }
 
@@ -572,8 +652,8 @@ namespace KenshiModManager.ViewModels
             {
                 var openFileDialog = new Microsoft.Win32.OpenFileDialog
                 {
-                    Title = "Import Playset",
-                    Filter = "Configuration Files (*.cfg)|*.cfg|All Files (*.*)|*.*",
+                    Title = Resources.Dialog_ImportPlayset,
+                    Filter = Resources.FileDialog_ConfigFilter,
                     DefaultExt = ".cfg",
                     CheckFileExists = true
                 };
@@ -587,13 +667,13 @@ namespace KenshiModManager.ViewModels
                     {
                         Playsets.Add(imported);
                         SelectedPlayset = imported;
-                        StatusMessage = $"Imported playset: {imported.Name}";
+                        StatusMessage = string.Format(Resources.Status_PlaysetImported, imported.Name);
                     }
                 }
             }
             catch (Exception ex)
             {
-                StatusMessage = $"Error importing playset: {ex.Message}";
+                StatusMessage = string.Format(Resources.Status_ImportError, ex.Message);
                 Console.WriteLine($"[MainViewModel] Error importing playset: {ex}");
             }
 
@@ -612,7 +692,7 @@ namespace KenshiModManager.ViewModels
 
             try
             {
-                StatusMessage = $"Loading playset: {playset.Name}...";
+                StatusMessage = string.Format(Resources.Status_LoadingPlayset, playset.Name);
 
                 string playsetFile = playset.FilePath;
 
@@ -663,12 +743,12 @@ namespace KenshiModManager.ViewModels
                 _currentPlaysetFilePath = playsetFile;
 
                 ActiveModsCount = ModsTabViewModel.ActivePlaysetMods.Count;
-                StatusMessage = $"Loaded playset: {playset.Name} ({ActiveModsCount} mods)";
+                StatusMessage = string.Format(Resources.Status_PlaysetLoaded, playset.Name, ActiveModsCount);
                 Console.WriteLine($"[MainViewModel] Loaded {ActiveModsCount} mods into playset: {playset.Name}");
             }
             catch (Exception ex)
             {
-                StatusMessage = $"Error loading playset: {ex.Message}";
+                StatusMessage = string.Format(Resources.Status_LoadPlaysetError, ex.Message);
                 Console.WriteLine($"[MainViewModel] Error loading playset: {ex}");
             }
         }

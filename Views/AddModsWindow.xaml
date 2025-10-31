@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KenshiModManager.Views"
         xmlns:converters="clr-namespace:KenshiModManager.Converters"
-        Title="Add Mods to Playset" Height="700" Width="1000" WindowStartupLocation="CenterOwner"
+        xmlns:properties="clr-namespace:KenshiModManager.Properties"
+        Title="{x:Static properties:Resources.AddModsWindow_Title}" Height="700" Width="1000" WindowStartupLocation="CenterOwner"
         Background="#1E1E1E" ResizeMode="CanResize">
   <FrameworkElement.Resources>
     <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
@@ -169,9 +170,9 @@
       <RowDefinition Height="Auto"/>
     </Grid.RowDefinitions>
     <StackPanel Grid.Row="0" Margin="0,0,0,20">
-      <TextBlock Text="ADD MODS TO PLAYSET" FontSize="20" FontWeight="SemiBold" Foreground="White"/>
+      <TextBlock Text="{x:Static properties:Resources.AddModsWindow_Header}" FontSize="20" FontWeight="SemiBold" Foreground="White"/>
       <TextBlock Margin="0,5,0,0" Foreground="#999999" FontSize="13">
-        <Run Text="Select mods to add to your active playset"/>
+        <Run Text="{x:Static properties:Resources.AddModsWindow_Description}"/>
       </TextBlock>
     </StackPanel>
     <Grid Row="1" Margin="0,0,0,15">
@@ -196,14 +197,14 @@
       </TextBox>
       <ComboBox Grid.Column="1" Width="150" Height="35" Margin="10,0,0,0" Background="#2D2D30" Foreground="#CCCCCC"
                 BorderBrush="#3E3E42" Padding="10,5" SelectedValue="{Binding SortBy}">
-        <ComboBoxItem Content="Sort by: Name" Tag="Name"/>
-        <ComboBoxItem Content="Sort by: Author" Tag="Author"/>
-        <ComboBoxItem Content="Sort by: Size" Tag="Size"/>
-        <ComboBoxItem Content="Sort by: Date" Tag="Date"/>
+        <ComboBoxItem Content="{x:Static properties:Resources.AddModsWindow_SortByName}" Tag="Name"/>
+        <ComboBoxItem Content="{x:Static properties:Resources.AddModsWindow_SortByAuthor}" Tag="Author"/>
+        <ComboBoxItem Content="{x:Static properties:Resources.AddModsWindow_SortBySize}" Tag="Size"/>
+        <ComboBoxItem Content="{x:Static properties:Resources.AddModsWindow_SortByDate}" Tag="Date"/>
       </ComboBox>
-      <Button Grid.Column="2" Content="Select All" Style="{StaticResource ModernButtonStyle}" Margin="10,0,0,0"
+      <Button Grid.Column="2" Content="{x:Static properties:Resources.AddModsWindow_SelectAll}" Style="{StaticResource ModernButtonStyle}" Margin="10,0,0,0"
               Height="35" Command="{Binding SelectAllCommand}"/>
-      <Button Grid.Column="3" Content="Deselect All" Style="{StaticResource ModernButtonStyle}" Margin="5,0,0,0"
+      <Button Grid.Column="3" Content="{x:Static properties:Resources.AddModsWindow_DeselectAll}" Style="{StaticResource ModernButtonStyle}" Margin="5,0,0,0"
               Height="35" Command="{Binding DeselectAllCommand}"/>
     </Grid>
     <Border Grid.Row="2" Background="#252526" BorderBrush="#3E3E42" BorderThickness="1" CornerRadius="6">
@@ -227,7 +228,7 @@
                 </EventTrigger>
               </FrameworkElement.Triggers>
             </TextBlock>
-            <TextBlock Text="Loading available mods..." FontSize="16" Foreground="#CCCCCC" Margin="0,20,0,0"
+            <TextBlock Text="{x:Static properties:Resources.AddModsWindow_LoadingMods}" FontSize="16" Foreground="#CCCCCC" Margin="0,20,0,0"
                        HorizontalAlignment="Center"/>
           </StackPanel>
         </Border>
@@ -255,7 +256,7 @@
                     <TextBlock FontSize="14" FontWeight="SemiBold" Foreground="White" TextTrimming="CharacterEllipsis"
                                Text="{Binding ModInfo.Name}"/>
                     <TextBlock FontSize="11" Foreground="#999999" Margin="0,2,0,0">
-                      <Run Text="Author:"/>
+                      <Run Text="{x:Static properties:Resources.ModsTab_AuthorLabel}"/>
                       <Run Foreground="#CCCCCC" Text="{Binding ModInfo.Author, Mode=OneWay}"/>
                     </TextBlock>
                   </StackPanel>
@@ -278,15 +279,11 @@
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="Auto"/>
       </Grid.ColumnDefinitions>
-      <TextBlock Grid.Column="0" VerticalAlignment="Center" Foreground="#CCCCCC" FontSize="13">
-        <Run Text="{Binding SelectedCount, Mode=OneWay}"/>
-        <Run Text="of"/>
-        <Run Text="{Binding TotalCount, Mode=OneWay}"/>
-        <Run Text="mods selected"/>
-      </TextBlock>
-      <Button Click="CancelButton_Click" Grid.Column="1" Content="CANCEL"
+      <TextBlock Grid.Column="0" VerticalAlignment="Center" Foreground="#CCCCCC" FontSize="13"
+                 Text="{Binding SelectedCountText, Mode=OneWay}"/>
+      <Button Click="CancelButton_Click" Grid.Column="1" Content="{x:Static properties:Resources.AddModsWindow_Cancel}"
               Style="{StaticResource ModernButtonStyle}" MinWidth="120" Margin="0,0,10,0"/>
-      <Button Click="AddButton_Click" Grid.Column="2" Content="ADD TO PLAYSET"
+      <Button Click="AddButton_Click" Grid.Column="2" Content="{x:Static properties:Resources.AddModsWindow_AddToPlayset}"
               Style="{StaticResource PrimaryButtonStyle}" MinWidth="160"
               Command="{Binding AddSelectedModsCommand}"/>
     </Grid>
