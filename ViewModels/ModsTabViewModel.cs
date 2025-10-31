@@ -472,7 +472,8 @@ public class ModsTabViewModel : ViewModelBase
         Console.WriteLine("[ModsTabViewModel] Error showing mod in folder: " + ex.Message);
         Console.WriteLine("[ModsTabViewModel] Stack trace: " + ex.StackTrace);
       }
-      await Task.CompletedTask;
     }
+    await Task.CompletedTask;
   }
+
 }
