@@ -7,7 +7,8 @@
         xmlns:vm="clr-namespace:KenshiModManager.ViewModels"
         xmlns:views="clr-namespace:KenshiModManager.Views"
         xmlns:converters="clr-namespace:KenshiModManager.Converters"
-        Title="Kenshi Mod Manager" Height="750" Width="1280" WindowStartupLocation="CenterScreen"
+        xmlns:properties="clr-namespace:KenshiModManager.Properties"
+        Title="{x:Static properties:Resources.MainWindow_Title}" Height="750" Width="1280" WindowStartupLocation="CenterScreen"
         Icon="Resources/app.ico"
         Background="#1E1E1E">
   <FrameworkElement.Resources>
@@ -234,11 +235,11 @@
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="0" Orientation="Horizontal">
           <Image Source="Resources/app.png" Width="48" Height="48" VerticalAlignment="Center" Margin="0,0,10,0"/>
-          <TextBlock Text="Kenshi Mod Manager" FontSize="20" FontWeight="SemiBold" Foreground="White"
+          <TextBlock Text="{x:Static properties:Resources.MainWindow_Title}" FontSize="20" FontWeight="SemiBold" Foreground="White"
                      VerticalAlignment="Center"/>
         </StackPanel>
         <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-          <TextBlock Text="Playset:" Foreground="#CCCCCC" FontSize="13" VerticalAlignment="Center" Margin="0,0,10,0"/>
+          <TextBlock Text="{x:Static properties:Resources.MainWindow_Playset}" Foreground="#CCCCCC" FontSize="13" VerticalAlignment="Center" Margin="0,0,10,0"/>
           <ComboBox MinWidth="200" Background="#2D2D30" Foreground="#CCCCCC"
                     BorderBrush="#3E3E42" FontSize="13" Padding="10,5" ItemsSource="{Binding Playsets}"
                     SelectedItem="{Binding SelectedPlayset}">
@@ -286,22 +287,22 @@
             </FrameworkElement.Style>
             <FrameworkElement.ContextMenu>
               <ContextMenu Style="{StaticResource DarkContextMenuStyle}">
-                <MenuItem Header="📋 Duplicate" Style="{StaticResource NoIconMenuItemStyle}"
+                <MenuItem Header="{x:Static properties:Resources.Playset_MenuDuplicate}" Style="{StaticResource NoIconMenuItemStyle}"
                           Command="{Binding DuplicatePlaysetCommand}" CommandParameter="{Binding SelectedPlayset}"/>
-                <MenuItem Header="✏ Rename" Style="{StaticResource NoIconMenuItemStyle}"
+                <MenuItem Header="{x:Static properties:Resources.Playset_MenuRename}" Style="{StaticResource NoIconMenuItemStyle}"
                           Command="{Binding RenamePlaysetCommand}" CommandParameter="{Binding SelectedPlayset}"/>
-                <MenuItem Header="📤 Share" Style="{StaticResource NoIconMenuItemStyle}"
+                <MenuItem Header="{x:Static properties:Resources.Playset_MenuExport}" Style="{StaticResource NoIconMenuItemStyle}"
                           Command="{Binding ExportPlaysetCommand}" CommandParameter="{Binding SelectedPlayset}"/>
-                <MenuItem Header="🗑 Delete" Style="{StaticResource NoIconMenuItemStyle}"
+                <MenuItem Header="{x:Static properties:Resources.Playset_MenuDelete}" Style="{StaticResource NoIconMenuItemStyle}"
                           Command="{Binding DeletePlaysetCommand}" CommandParameter="{Binding SelectedPlayset}"/>
               </ContextMenu>
             </FrameworkElement.ContextMenu>
           </Button>
         </StackPanel>
         <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-          <Button Content="+ New Playset" Style="{StaticResource ModernButtonStyle}" Margin="0,0,10,0"
+          <Button Content="{x:Static properties:Resources.MainWindow_NewPlayset}" Style="{StaticResource ModernButtonStyle}" Margin="0,0,10,0"
                   Command="{Binding CreatePlaysetCommand}"/>
-          <Button Content="📂 Import" Style="{StaticResource ModernButtonStyle}"
+          <Button Content="{x:Static properties:Resources.Playset_Import}" Style="{StaticResource ModernButtonStyle}"
                   Command="{Binding ImportPlaysetCommand}"/>
         </StackPanel>
       </Grid>
@@ -310,22 +311,22 @@
       <FrameworkElement.Resources>
         <Style TargetType="{x:Type TabItem}" BasedOn="{StaticResource ModernTabItemStyle}"/>
       </FrameworkElement.Resources>
-      <TabItem Header="📦 Mod Manager">
+      <TabItem Header="{x:Static properties:Resources.MainWindow_TabMods}">
         <views:ModsTabView DataContext="{Binding ModsTabViewModel}"/>
       </TabItem>
-      <TabItem Header="🌐 Translator">
+      <TabItem Header="{x:Static properties:Resources.MainWindow_TabTranslator}">
         <Grid Background="#1E1E1E">
-          <TextBlock Text="Translator content will be here" Foreground="#666666" HorizontalAlignment="Center"
+          <TextBlock Text="{x:Static properties:Resources.MainWindow_TranslatorPlaceholder}" Foreground="#666666" HorizontalAlignment="Center"
                      VerticalAlignment="Center" FontSize="16"/>
         </Grid>
       </TabItem>
-      <TabItem Header="✓ Validator &amp; Auto-Fix">
+      <TabItem Header="{x:Static properties:Resources.MainWindow_TabValidator}">
         <Grid Background="#1E1E1E">
-          <TextBlock Text="Validator content will be here" Foreground="#666666" HorizontalAlignment="Center"
+          <TextBlock Text="{x:Static properties:Resources.MainWindow_ValidatorPlaceholder}" Foreground="#666666" HorizontalAlignment="Center"
                      VerticalAlignment="Center" FontSize="16"/>
         </Grid>
       </TabItem>
-      <TabItem Header="⚙ Settings">
+      <TabItem Header="{x:Static properties:Resources.MainWindow_TabSettings}">
         <views:SettingsTabView DataContext="{Binding SettingsTabViewModel}"/>
       </TabItem>
     </TabControl>

@@ -232,20 +232,20 @@ namespace KenshiModManager.ViewModels
             ValidateAllPaths();
         }
 
-        private void ValidateAllPaths()
+        public void ValidateAllPaths()
         {
             IsKenshiPathValid = ValidateKenshiPath(KenshiPath);
             if (IsKenshiPathValid)
             {
-                KenshiPathStatus = "✓ Valid - Kenshi installation found";
+                KenshiPathStatus = Resources.SettingsValidation_KenshiValid;
             }
             else if (string.IsNullOrEmpty(KenshiPath))
             {
-                KenshiPathStatus = "⚠ Path not set";
+                KenshiPathStatus = Resources.SettingsValidation_PathNotSet;
             }
             else
             {
-                KenshiPathStatus = "✗ Invalid - kenshi_x64.exe or kenshi.exe not found";
+                KenshiPathStatus = Resources.SettingsValidation_KenshiInvalid;
             }
 
             IsModsPathValid = ValidateModsPath(ModsPath);
@@ -254,22 +254,22 @@ namespace KenshiModManager.ViewModels
                 ModsCount = CountMods(ModsPath);
                 if (ModsCount > 0)
                 {
-                    ModsPathStatus = $"✓ Valid - Found {ModsCount} mod(s)";
+                    ModsPathStatus = string.Format(Resources.SettingsValidation_ModsValid, ModsCount);
                 }
                 else
                 {
-                    ModsPathStatus = "⚠ Valid folder, but no .mod files found";
+                    ModsPathStatus = Resources.SettingsValidation_ModsValidNoMods;
                 }
             }
             else if (string.IsNullOrEmpty(ModsPath))
             {
                 ModsCount = 0;
-                ModsPathStatus = "⚠ Path not set";
+                ModsPathStatus = Resources.SettingsValidation_PathNotSet;
             }
             else
             {
                 ModsCount = 0;
-                ModsPathStatus = "✗ Invalid - Folder does not exist";
+                ModsPathStatus = Resources.SettingsValidation_FolderNotExists;
             }
 
             IsWorkshopPathValid = ValidateWorkshopPath(WorkshopPath);
@@ -278,22 +278,22 @@ namespace KenshiModManager.ViewModels
                 WorkshopModsCount = CountMods(WorkshopPath);
                 if (WorkshopModsCount > 0)
                 {
-                    WorkshopPathStatus = $"✓ Valid - Found {WorkshopModsCount} mod(s)";
+                    WorkshopPathStatus = string.Format(Resources.SettingsValidation_ModsValid, WorkshopModsCount);
                 }
                 else
                 {
-                    WorkshopPathStatus = "⚠ Valid folder, but no .mod files found";
+                    WorkshopPathStatus = Resources.SettingsValidation_ModsValidNoMods;
                 }
             }
             else if (string.IsNullOrEmpty(WorkshopPath))
             {
                 WorkshopModsCount = 0;
-                WorkshopPathStatus = "⚠ Path not set";
+                WorkshopPathStatus = Resources.SettingsValidation_PathNotSet;
             }
             else
             {
                 WorkshopModsCount = 0;
-                WorkshopPathStatus = "✗ Invalid - Folder does not exist";
+                WorkshopPathStatus = Resources.SettingsValidation_FolderNotExists;
             }
 
             Console.WriteLine($"[SettingsViewModel] Validated paths: Kenshi={IsKenshiPathValid}, Mods={IsModsPathValid} ({ModsCount}), Workshop={IsWorkshopPathValid} ({WorkshopModsCount})");
@@ -445,7 +445,7 @@ namespace KenshiModManager.ViewModels
         {
             var dialog = new VistaFolderBrowserDialog
             {
-                Description = "Select Mods Folder",
+                Description = Resources.FileDialog_SelectModsFolder,
                 UseDescriptionForTitle = true
             };
 
@@ -463,7 +463,7 @@ namespace KenshiModManager.ViewModels
         {
             var dialog = new VistaFolderBrowserDialog
             {
-                Description = "Select Workshop Folder",
+                Description = Resources.FileDialog_SelectWorkshopFolder,
                 UseDescriptionForTitle = true
             };
 

@@ -35,7 +35,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Grid.Column="0" Text="Kenshi Installation" FontSize="16" FontWeight="SemiBold" Foreground="#CCCCCC"/>
+                        <TextBlock Grid.Column="0" Text="{x:Static properties:Resources.SettingsTab_KenshiInstallation}" FontSize="16" FontWeight="SemiBold" Foreground="#CCCCCC"/>
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
                             <TextBlock Text="{Binding IsKenshiPathCustom, Converter={StaticResource BoolToStatusConverter}}"
                                        FontSize="12" Margin="0,0,10,0" VerticalAlignment="Center"/>
@@ -53,7 +53,7 @@
                     <TextBlock Text="{Binding KenshiPathStatus}"
                                FontSize="11" Foreground="#808080" Margin="5,0,0,10"/>
 
-                    <Button Content="Browse..." Command="{Binding BrowseKenshiPathCommand}"
+                    <Button Content="{x:Static properties:Resources.SettingsTab_Browse}" Command="{Binding BrowseKenshiPathCommand}"
                             Background="#3E3E42" Foreground="#CCCCCC" BorderBrush="#555555"
                             Padding="15,5" FontSize="13" HorizontalAlignment="Left"/>
                 </StackPanel>
@@ -69,7 +69,7 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Column="0" Orientation="Horizontal">
-                            <TextBlock Text="Mods Folder" FontSize="16" FontWeight="SemiBold" Foreground="#CCCCCC"/>
+                            <TextBlock Text="{x:Static properties:Resources.SettingsTab_ModsFolder}" FontSize="16" FontWeight="SemiBold" Foreground="#CCCCCC"/>
                             <TextBlock Text="{Binding ModsCount, StringFormat='({0} mods)'}"
                                        FontSize="13" Foreground="#808080" Margin="10,0,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
@@ -91,7 +91,7 @@
                     <TextBlock Text="{Binding ModsPathStatus}"
                                FontSize="11" Foreground="#808080" Margin="5,0,0,10"/>
 
-                    <Button Content="Browse..." Command="{Binding BrowseModsPathCommand}"
+                    <Button Content="{x:Static properties:Resources.SettingsTab_Browse}" Command="{Binding BrowseModsPathCommand}"
                             Background="#3E3E42" Foreground="#CCCCCC" BorderBrush="#555555"
                             Padding="15,5" FontSize="13" HorizontalAlignment="Left"/>
                 </StackPanel>
@@ -107,7 +107,7 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Column="0" Orientation="Horizontal">
-                            <TextBlock Text="Workshop Folder" FontSize="16" FontWeight="SemiBold" Foreground="#CCCCCC"/>
+                            <TextBlock Text="{x:Static properties:Resources.SettingsTab_WorkshopFolder}" FontSize="16" FontWeight="SemiBold" Foreground="#CCCCCC"/>
                             <TextBlock Text="{Binding WorkshopModsCount, StringFormat='({0} mods)'}"
                                        FontSize="13" Foreground="#808080" Margin="10,0,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
@@ -129,7 +129,7 @@
                     <TextBlock Text="{Binding WorkshopPathStatus}"
                                FontSize="11" Foreground="#808080" Margin="5,0,0,10"/>
 
-                    <Button Content="Browse..." Command="{Binding BrowseWorkshopPathCommand}"
+                    <Button Content="{x:Static properties:Resources.SettingsTab_Browse}" Command="{Binding BrowseWorkshopPathCommand}"
                             Background="#3E3E42" Foreground="#CCCCCC" BorderBrush="#555555"
                             Padding="15,5" FontSize="13" HorizontalAlignment="Left"/>
                 </StackPanel>
