@@ -37,7 +37,47 @@ namespace KenshiModManager.ViewModels
 
             _reverseEngineer = new ReverseEngineer();
             _modManager = new ModManager(_reverseEngineer);
+
+            // Try to get path from ModManager autodetect first
             _kenshiPath = ModManager.KenshiPath ?? string.Empty;
+
+            // If autodetect failed but we have custom settings, validate and use those
+            if (string.IsNullOrEmpty(_kenshiPath) && !string.IsNullOrEmpty(_appSettings.CustomKenshiPath))
+            {
+                var customPath = _appSettings.CustomKenshiPath;
+
+                // Validate custom path before applying
+                if (Directory.Exists(customPath) &&
+                    Directory.EnumerateFiles(customPath, "kenshi*.exe").Any())
+                {
+                    Console.WriteLine("[MainViewModel] Autodetect failed, using CustomKenshiPath from AppSettings");
+                    _kenshiPath = customPath;
+                    ModManager.SetKenshiPath(_kenshiPath);
+
+                    // Also set custom workshop and mods paths if available and valid
+                    if (!string.IsNullOrEmpty(_appSettings.CustomWorkshopPath) &&
+                        Directory.Exists(_appSettings.CustomWorkshopPath))
+                    {
+                        ModManager.SetWorkshopPath(_appSettings.CustomWorkshopPath);
+                        Console.WriteLine($"[MainViewModel] Set custom workshop path: {_appSettings.CustomWorkshopPath}");
+                    }
+
+                    if (!string.IsNullOrEmpty(_appSettings.CustomModsPath) &&
+                        Directory.Exists(_appSettings.CustomModsPath))
+                    {
+                        ModManager.SetModsPath(_appSettings.CustomModsPath);
+                        Console.WriteLine($"[MainViewModel] Set custom mods path: {_appSettings.CustomModsPath}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("[MainViewModel] WARNING: CustomKenshiPath from AppSettings is invalid or exe not found");
+                }
+            }
+            else if (!string.IsNullOrEmpty(_kenshiPath))
+            {
+                Console.WriteLine($"[MainViewModel] Autodetect succeeded: {_kenshiPath}");
+            }
 
             if (!string.IsNullOrEmpty(_kenshiPath))
             {

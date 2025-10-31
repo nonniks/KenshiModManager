@@ -46,19 +46,40 @@ namespace KenshiModManager.ViewModels
         public string KenshiPath
         {
             get => _kenshiPath;
-            set => SetProperty(ref _kenshiPath, value);
+            set
+            {
+                if (SetProperty(ref _kenshiPath, value))
+                {
+                    ValidateAllPaths();
+                    PersistSettings();
+                }
+            }
         }
 
         public string ModsPath
         {
             get => _modsPath;
-            set => SetProperty(ref _modsPath, value);
+            set
+            {
+                if (SetProperty(ref _modsPath, value))
+                {
+                    ValidateAllPaths();
+                    PersistSettings();
+                }
+            }
         }
 
         public string WorkshopPath
         {
             get => _workshopPath;
-            set => SetProperty(ref _workshopPath, value);
+            set
+            {
+                if (SetProperty(ref _workshopPath, value))
+                {
+                    ValidateAllPaths();
+                    PersistSettings();
+                }
+            }
         }
 
         public bool IsKenshiPathValid
@@ -272,12 +293,68 @@ namespace KenshiModManager.ViewModels
             }
         }
 
+        private void PersistSettings()
+        {
+            bool needsSave = false;
+
+            if (IsKenshiPathCustom && IsKenshiPathValid)
+            {
+                if (!string.Equals(_appSettings.CustomKenshiPath, KenshiPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    _appSettings.CustomKenshiPath = KenshiPath;
+                    needsSave = true;
+                    Console.WriteLine($"[SettingsViewModel] Will save CustomKenshiPath: {KenshiPath}");
+                }
+
+                if (!string.Equals(ModManager.KenshiPath, KenshiPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    ModManager.SetKenshiPath(KenshiPath);
+                }
+            }
+
+            if (IsModsPathCustom && IsModsPathValid)
+            {
+                if (!string.Equals(_appSettings.CustomModsPath, ModsPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    _appSettings.CustomModsPath = ModsPath;
+                    needsSave = true;
+                    Console.WriteLine($"[SettingsViewModel] Will save CustomModsPath: {ModsPath}");
+                }
+
+                if (!string.Equals(ModManager.gamedirModsPath, ModsPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    ModManager.SetModsPath(ModsPath);
+                }
+            }
+
+            if (IsWorkshopPathCustom && IsWorkshopPathValid)
+            {
+                if (!string.Equals(_appSettings.CustomWorkshopPath, WorkshopPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    _appSettings.CustomWorkshopPath = WorkshopPath;
+                    needsSave = true;
+                    Console.WriteLine($"[SettingsViewModel] Will save CustomWorkshopPath: {WorkshopPath}");
+                }
+
+                if (!string.Equals(ModManager.workshopModsPath, WorkshopPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    ModManager.SetWorkshopPath(WorkshopPath);
+                }
+            }
+
+            if (needsSave)
+            {
+                _appSettings.Save();
+                Console.WriteLine("[SettingsViewModel] Settings persisted");
+            }
+        }
+
         private void BrowseKenshiPath()
         {
             var dialog = new OpenFileDialog
             {
-                Title = "Select Kenshi executable (any .exe file in Kenshi folder)",
-                Filter = "All Executables (*.exe)|*.exe|Kenshi Executable|kenshi_x64.exe;kenshi.exe",
+                Title = Resources.FileDialog_SelectKenshiExe,
+                Filter = "Kenshi Executable (kenshi*.exe)|kenshi*.exe|All Executables (*.exe)|*.exe",
                 FilterIndex = 1,
                 CheckFileExists = true
             };
@@ -287,15 +364,13 @@ namespace KenshiModManager.ViewModels
                 var selectedPath = Path.GetDirectoryName(dialog.FileName);
                 if (!string.IsNullOrEmpty(selectedPath))
                 {
-                    KenshiPath = selectedPath;
                     IsKenshiPathCustom = true;
+                    KenshiPath = selectedPath;
 
                     if (!IsModsPathCustom)
                     {
                         ModsPath = Path.Combine(selectedPath, "mods");
                     }
-
-                    ValidateAllPaths();
                 }
             }
         }
@@ -313,9 +388,8 @@ namespace KenshiModManager.ViewModels
 
             if (dialog.ShowDialog() == true)
             {
-                ModsPath = dialog.SelectedPath;
                 IsModsPathCustom = true;
-                ValidateAllPaths();
+                ModsPath = dialog.SelectedPath;
             }
         }
 
@@ -332,9 +406,8 @@ namespace KenshiModManager.ViewModels
 
             if (dialog.ShowDialog() == true)
             {
-                WorkshopPath = dialog.SelectedPath;
                 IsWorkshopPathCustom = true;
-                ValidateAllPaths();
+                WorkshopPath = dialog.SelectedPath;
             }
         }
 
