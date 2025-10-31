@@ -67,7 +67,7 @@ Output will be in `bin\Release\net9.0-windows\win-x64\publish\`
 
 ## Dependencies
 
-- [KenshiLib](https://github.com/nonniks/KenshiLib) - Core library for Kenshi mod management
+- [KenshiLib](https://www.nuget.org/packages/KenshiLib/1.0.1) - Core library for Kenshi mod management
 - [AutoUpdater.NET](https://github.com/ravibpatel/AutoUpdater.NET) - Automatic update functionality
 - [Ookii.Dialogs.Wpf](https://github.com/ookii-dialogs/ookii-dialogs-wpf) - Native Windows dialogs
 
