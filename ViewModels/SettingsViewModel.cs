@@ -261,11 +261,37 @@ namespace KenshiModManager.ViewModels
 
         private bool ValidateKenshiPath(string path)
         {
-            if (string.IsNullOrEmpty(path) || !Directory.Exists(path))
+            if (string.IsNullOrWhiteSpace(path) || !Directory.Exists(path))
                 return false;
 
-            return File.Exists(Path.Combine(path, "kenshi_x64.exe")) ||
-                   File.Exists(Path.Combine(path, "kenshi.exe"));
+            try
+            {
+                static int GetPriority(string fileName)
+                {
+                    if (fileName.Equals("kenshi_x64.exe", StringComparison.OrdinalIgnoreCase)) return 0;
+                    if (fileName.Equals("kenshi_GOG_x64.exe", StringComparison.OrdinalIgnoreCase)) return 1;
+                    if (fileName.StartsWith("kenshi", StringComparison.OrdinalIgnoreCase) &&
+                        fileName.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)) return 2;
+                    return 3;
+                }
+
+                var exe = Directory.EnumerateFiles(path, "kenshi*.exe")
+                    .Select(filePath => new FileInfo(filePath))
+                    .OrderBy(f => GetPriority(f.Name))
+                    .ThenByDescending(f => f.LastWriteTimeUtc)
+                    .FirstOrDefault();
+
+                if (exe == null)
+                    return false;
+
+                Console.WriteLine($"[SettingsViewModel] Detected Kenshi executable: {exe.Name}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[SettingsViewModel] Error detecting Kenshi executable: {ex.Message}");
+                return false;
+            }
         }
 
         private bool ValidateModsPath(string path)
