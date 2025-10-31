@@ -1,0 +1,547 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!--
+  ====================================================================================================
+  PORTUGUESE TRANSLATION FILE FOR KENSHI MOD MANAGER
+  ====================================================================================================
+
+  INSTRUCTIONS FOR TRANSLATOR:
+  1. Translate ONLY the text between <value> and </value> tags
+  2. DO NOT translate the "name" attributes (e.g., MainWindow.Title)
+  3. DO NOT translate placeholders like {0}, {1} - these are replaced with dynamic values at runtime
+  4. Keep emoji symbols (📦, 🌐, ⚙, etc.) as they are, or replace with appropriate Portuguese alternatives
+  5. Pay attention to comments - they explain the context of each string
+  6. Preserve \n for line breaks in messages
+  7. Keep the same punctuation style where appropriate
+
+  EXAMPLES:
+  ❌ WRONG: <data name="Dialog.RenamePlayset"> → DO NOT translate this
+  ✓ CORRECT: <value>Rename Playset</value> → Translate this to: <value>Renomear Playset</value>
+
+  ✓ CORRECT: <value>Loaded {0} mods, {1} active</value> → <value>Carregados {0} mods, {1} ativos</value>
+             Keep {0} and {1} in the same relative positions
+  ====================================================================================================
+  -->
+
+  <!-- Main Window -->
+  <data name="MainWindow.Title" xml:space="preserve">
+    <value>Kenshi Mod Manager</value>
+    <comment>Main window title</comment>
+  </data>
+  <data name="MainWindow.Playset" xml:space="preserve">
+    <value>Conjunto:</value>
+    <comment>Playset selector label</comment>
+  </data>
+  <data name="MainWindow.NewPlayset" xml:space="preserve">
+    <value>+ Novo conjunto</value>
+    <comment>Create new playset button</comment>
+  </data>
+  <data name="MainWindow.Import" xml:space="preserve">
+    <value>📂 Importar</value>
+    <comment>Import playset button</comment>
+  </data>
+  <data name="MainWindow.Refresh" xml:space="preserve">
+    <value>🔄 Atualizar</value>
+    <comment>Refresh mods button</comment>
+  </data>
+  <data name="MainWindow.Launch" xml:space="preserve">
+    <value>▶ Iniciar</value>
+    <comment>Launch game button</comment>
+  </data>
+  <data name="MainWindow.Path" xml:space="preserve">
+    <value>Diretório: </value>
+    <comment>Game path label in footer</comment>
+  </data>
+  <data name="MainWindow.Mods" xml:space="preserve">
+    <value>Mods: </value>
+    <comment>Active mods count label in footer</comment>
+  </data>
+
+  <!-- Playset Context Menu -->
+  <data name="PlaysetMenu.Duplicate" xml:space="preserve">
+    <value>📋 Duplicar</value>
+    <comment>Duplicate playset menu item</comment>
+  </data>
+  <data name="PlaysetMenu.Rename" xml:space="preserve">
+    <value>✏ Renomear</value>
+    <comment>Rename playset menu item</comment>
+  </data>
+  <data name="PlaysetMenu.Share" xml:space="preserve">
+    <value>📤 Partilhar</value>
+    <comment>Share/Export playset menu item</comment>
+  </data>
+  <data name="PlaysetMenu.Delete" xml:space="preserve">
+    <value>🗑 Apagar</value>
+    <comment>Delete playset menu item</comment>
+  </data>
+
+  <!-- Tab Headers -->
+  <data name="Tab.ModManager" xml:space="preserve">
+    <value>📦 Gestor de Mods</value>
+    <comment>Mod Manager tab header</comment>
+  </data>
+  <data name="Tab.Translator" xml:space="preserve">
+    <value>🌐 Tradutor</value>
+    <comment>Translator tab header</comment>
+  </data>
+  <data name="Tab.Validator" xml:space="preserve">
+    <value>✓ Validador &amp; Auto-Fix</value>
+    <comment>Validator tab header</comment>
+  </data>
+  <data name="Tab.Settings" xml:space="preserve">
+    <value>⚙ Configurações</value>
+    <comment>Settings tab header</comment>
+  </data>
+
+  <!-- Mods Tab -->
+  <data name="ModsTab.Title" xml:space="preserve">
+    <value>MODS POR ORDEM DE CARREGAMENTO</value>
+    <comment>Mods tab main title</comment>
+  </data>
+  <data name="ModsTab.ModsCount" xml:space="preserve">
+    <value>{0} mods</value>
+    <comment>Mods count display. {0} is the number</comment>
+  </data>
+  <data name="ModsTab.SearchIcon" xml:space="preserve">
+    <value>🔍</value>
+    <comment>Search icon</comment>
+  </data>
+  <data name="ModsTab.Author" xml:space="preserve">
+    <value>Autor:</value>
+    <comment>Author label for mod items</comment>
+  </data>
+  <data name="ModsTab.RemoveTooltip" xml:space="preserve">
+    <value>Remover do conjunto</value>
+    <comment>Tooltip for remove button</comment>
+  </data>
+  <data name="ModsTab.OpenWorkshop" xml:space="preserve">
+    <value>🔗 Abrir na Steam Workshop</value>
+    <comment>Context menu item to open in Steam</comment>
+  </data>
+  <data name="ModsTab.ShowInFolder" xml:space="preserve">
+    <value>📁 Abrir diretório</value>
+    <comment>Context menu item to show in folder</comment>
+  </data>
+  <data name="ModsTab.DragToReorder" xml:space="preserve">
+    <value>Arraste para mudar a ordem dos mods</value>
+    <comment>Help text for drag and drop</comment>
+  </data>
+  <data name="ModsTab.ClickForOptions" xml:space="preserve">
+    <value>Clique em ⋯ para opções</value>
+    <comment>Help text for options menu</comment>
+  </data>
+  <data name="ModsTab.AddMods" xml:space="preserve">
+    <value>+ ADICIONAR MODS</value>
+    <comment>Add mods button</comment>
+  </data>
+  <data name="ModsTab.Refresh" xml:space="preserve">
+    <value>⟳ Atualizar</value>
+    <comment>Refresh button</comment>
+  </data>
+  <data name="ModsTab.Loading" xml:space="preserve">
+    <value>Loading mods...</value>
+    <comment>Loading mods message</comment>
+  </data>
+
+  <!-- Settings Tab -->
+  <data name="SettingsTab.Title" xml:space="preserve">
+    <value>Configurações</value>
+    <comment>Settings tab title</comment>
+  </data>
+  <data name="SettingsTab.KenshiInstallation" xml:space="preserve">
+    <value>Diretório de instalação do Kenshi</value>
+    <comment>Kenshi installation section header</comment>
+  </data>
+  <data name="SettingsTab.ModsFolder" xml:space="preserve">
+    <value>Diretório de mods</value>
+    <comment>Mods folder section header</comment>
+  </data>
+  <data name="SettingsTab.WorkshopFolder" xml:space="preserve">
+    <value>Diretório da Workshop</value>
+    <comment>Workshop folder section header</comment>
+  </data>
+  <data name="SettingsTab.ModsCountFormat" xml:space="preserve">
+    <value>({0} mods)</value>
+    <comment>Mods count in parentheses. {0} is the number</comment>
+  </data>
+  <data name="SettingsTab.Browse" xml:space="preserve">
+    <value>Procurar...</value>
+    <comment>Browse button text</comment>
+  </data>
+  <data name="SettingsTab.ResetToAutoDetect" xml:space="preserve">
+    <value>Reset</value>
+    <comment>Reset to auto-detect button</comment>
+  </data>
+  <data name="SettingsTab.SaveSettings" xml:space="preserve">
+    <value>Guardar</value>
+    <comment>Save settings button</comment>
+  </data>
+  <data name="SettingsTab.Language" xml:space="preserve">
+    <value>Idioma</value>
+    <comment>Language section header</comment>
+  </data>
+  <data name="SettingsTab.ComingSoon" xml:space="preserve">
+    <value>Em breve...</value>
+    <comment>Coming soon placeholder text</comment>
+  </data>
+
+  <!-- Add Mods Window -->
+  <data name="AddModsWindow.Title" xml:space="preserve">
+    <value>Adicionar Mods ao Conjunto de Jogos</value>
+    <comment>Add mods window title</comment>
+  </data>
+  <data name="AddModsWindow.Header" xml:space="preserve">
+    <value>ADICIONAR MODS AO CONJUNTO</value>
+    <comment>Add mods window main header</comment>
+  </data>
+  <data name="AddModsWindow.Description" xml:space="preserve">
+    <value>Selecione os mods para adicionar ao seu conjunto de jogos ativo</value>
+    <comment>Add mods window description</comment>
+  </data>
+  <data name="AddModsWindow.SortByName" xml:space="preserve">
+    <value>Ordenar por: Nome</value>
+    <comment>Sort by name option</comment>
+  </data>
+  <data name="AddModsWindow.SortByAuthor" xml:space="preserve">
+    <value>Ordenar por: Autor</value>
+    <comment>Sort by author option</comment>
+  </data>
+  <data name="AddModsWindow.SortBySize" xml:space="preserve">
+    <value>Ordenar por: Tamanho</value>
+    <comment>Sort by size option</comment>
+  </data>
+  <data name="AddModsWindow.SortByDate" xml:space="preserve">
+    <value>Ordenar por: Data</value>
+    <comment>Sort by date option</comment>
+  </data>
+  <data name="AddModsWindow.SelectAll" xml:space="preserve">
+    <value>Marcar todos</value>
+    <comment>Select all button</comment>
+  </data>
+  <data name="AddModsWindow.DeselectAll" xml:space="preserve">
+    <value>Desmarcar todos</value>
+    <comment>Deselect all button</comment>
+  </data>
+  <data name="AddModsWindow.Loading" xml:space="preserve">
+    <value>Carregar mods disponíveis...</value>
+    <comment>Loading mods message</comment>
+  </data>
+  <data name="AddModsWindow.Author" xml:space="preserve">
+    <value>Autor:</value>
+    <comment>Author label for mod items</comment>
+  </data>
+  <data name="AddModsWindow.SelectedCount" xml:space="preserve">
+    <value>{0} de {1} mods selecionados</value>
+    <comment>Selected mods count. {0} is selected, {1} is total</comment>
+  </data>
+  <data name="AddModsWindow.Cancel" xml:space="preserve">
+    <value>CANCELAR</value>
+    <comment>Cancel button</comment>
+  </data>
+  <data name="AddModsWindow.AddToPlayset" xml:space="preserve">
+    <value>ADICIONAR AO CONJUNTO</value>
+    <comment>Add to playset button</comment>
+  </data>
+
+  <!-- Input Dialog -->
+  <data name="InputDialog.Title" xml:space="preserve">
+    <value>Input</value>
+    <comment>Input dialog title</comment>
+  </data>
+  <data name="InputDialog.Prompt" xml:space="preserve">
+    <value>Introduza o valor:</value>
+    <comment>Default input prompt</comment>
+  </data>
+  <data name="InputDialog.Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+    <comment>Cancel button</comment>
+  </data>
+  <data name="InputDialog.OK" xml:space="preserve">
+    <value>OK</value>
+    <comment>OK button</comment>
+  </data>
+  <data name="InputDialog.EmptyNameError" xml:space="preserve">
+    <value>O nome não pode estar vazio.</value>
+    <comment>Error when name is empty</comment>
+  </data>
+  <data name="InputDialog.ValidationErrorTitle" xml:space="preserve">
+    <value>Erro na validação</value>
+    <comment>Validation error dialog title</comment>
+  </data>
+  <data name="InputDialog.InvalidCharactersError" xml:space="preserve">
+    <value>Name contains invalid characters.\nInvalid characters: {0}</value>
+    <comment>Error when name has invalid characters. {0} is the list of invalid characters</comment>
+  </data>
+
+  <!-- Status Messages (MainViewModel) -->
+  <data name="Status.Ready" xml:space="preserve">
+    <value>Pronto</value>
+    <comment>Ready status message</comment>
+  </data>
+  <data name="Status.PreparingLaunch" xml:space="preserve">
+    <value>Preparando para iniciar o Kenshi...</value>
+    <comment>Preparing to launch game status</comment>
+  </data>
+  <data name="Status.Launching" xml:space="preserve">
+    <value>A iniciar o Kenshi...</value>
+    <comment>Launching game status</comment>
+  </data>
+  <data name="Status.GameRunning" xml:space="preserve">
+    <value>Kenshi iniciou...</value>
+    <comment>Game is running status</comment>
+  </data>
+  <data name="Status.LaunchFailed" xml:space="preserve">
+    <value>Falha ao iniciar o Kenshi</value>
+    <comment>Failed to launch game status</comment>
+  </data>
+  <data name="Status.LaunchError" xml:space="preserve">
+    <value>Erro ao iniciar o jogo: {0}</value>
+    <comment>Error launching game. {0} is the error message</comment>
+  </data>
+  <data name="Status.RefreshingMods" xml:space="preserve">
+    <value>Atualizar mods...</value>
+    <comment>Refreshing mods status</comment>
+  </data>
+  <data name="Status.ModsLoaded" xml:space="preserve">
+    <value>Carregou {0} mods, {1} active</value>
+    <comment>Mods loaded status. {0} is total mods, {1} is active mods</comment>
+  </data>
+  <data name="Status.RefreshError" xml:space="preserve">
+    <value>Erro ao atualizar mods: {0}</value>
+    <comment>Error refreshing mods. {0} is the error message</comment>
+  </data>
+  <data name="Status.GameClosed" xml:space="preserve">
+    <value>Kenshi foi fechado</value>
+    <comment>Game closed status</comment>
+  </data>
+  <data name="Status.PlaysetCreated" xml:space="preserve">
+    <value>Criou um Conjunto vaziO: {0}</value>
+    <comment>Playset created status. {0} is the playset name</comment>
+  </data>
+  <data name="Status.PlaysetCreateError" xml:space="preserve">
+    <value>Erro ao criar conjunto: {0}</value>
+    <comment>Error creating playset. {0} is the error message</comment>
+  </data>
+  <data name="Status.NameUnchanged" xml:space="preserve">
+    <value>Nome inalterado</value>
+    <comment>Name was not changed status</comment>
+  </data>
+  <data name="Status.PlaysetRenamed" xml:space="preserve">
+    <value>Conjunto renomeado para: {0}</value>
+    <comment>Playset renamed status. {0} is the new name</comment>
+  </data>
+  <data name="Status.RenameFailedNameExists" xml:space="preserve">
+    <value>Falha ao renomear o conjunto - o nome já existe</value>
+    <comment>Failed to rename - name exists error</comment>
+  </data>
+  <data name="Status.RenameError" xml:space="preserve">
+    <value>Erro ao renomear o conjunto: {0}</value>
+    <comment>Error renaming playset. {0} is the error message</comment>
+  </data>
+  <data name="Status.PlaysetDuplicated" xml:space="preserve">
+    <value>Conjunto duplicado: {0}</value>
+    <comment>Playset duplicated status. {0} is the playset name</comment>
+  </data>
+  <data name="Status.DuplicateError" xml:space="preserve">
+    <value>Erro ao duplicar conjunto: {0}</value>
+    <comment>Error duplicating playset. {0} is the error message</comment>
+  </data>
+  <data name="Status.PlaysetDeleted" xml:space="preserve">
+    <value>Apagar conjunto: {0}</value>
+    <comment>Playset deleted status. {0} is the playset name</comment>
+  </data>
+  <data name="Status.DeleteFailed" xml:space="preserve">
+    <value>Falha ao apagar conjunto: {0}</value>
+    <comment>Failed to delete playset. {0} is the playset name</comment>
+  </data>
+  <data name="Status.DeleteError" xml:space="preserve">
+    <value>Erro ao apagar conjunto: {0}</value>
+    <comment>Error deleting playset. {0} is the error message</comment>
+  </data>
+  <data name="Status.PlaysetExported" xml:space="preserve">
+    <value>Exportar conjunto para: {0}</value>
+    <comment>Playset exported status. {0} is the file path</comment>
+  </data>
+  <data name="Status.ExportError" xml:space="preserve">
+    <value>Erro ao exportar conjunto: {0}</value>
+    <comment>Error exporting playset. {0} is the error message</comment>
+  </data>
+  <data name="Status.PlaysetImported" xml:space="preserve">
+    <value>Conjunto importado: {0}</value>
+    <comment>Playset imported status. {0} is the playset name</comment>
+  </data>
+  <data name="Status.ImportError" xml:space="preserve">
+    <value>Erro ao importar conjunto: {0}</value>
+    <comment>Error importing playset. {0} is the error message</comment>
+  </data>
+  <data name="Status.LoadingPlayset" xml:space="preserve">
+    <value>Ler conjunto: {0}...</value>
+    <comment>Loading playset status. {0} is the playset name</comment>
+  </data>
+  <data name="Status.PlaysetLoaded" xml:space="preserve">
+    <value>Conjunto: {0} ({1} mods)</value>
+    <comment>Playset loaded status. {0} is name, {1} is mods count</comment>
+  </data>
+  <data name="Status.LoadPlaysetError" xml:space="preserve">
+    <value>Erro na leitura do conjunto: {0}</value>
+    <comment>Error loading playset. {0} is the error message</comment>
+  </data>
+  <data name="Status.RemovingMod" xml:space="preserve">
+    <value>Remover mod do conjunto: {0}</value>
+    <comment>Removing mod status. {0} is the mod name</comment>
+  </data>
+  <data name="Status.ModRemoved" xml:space="preserve">
+    <value>Mod removido do conjunto: {0}</value>
+    <comment>Mod removed status. {0} is the mod name</comment>
+  </data>
+
+  <!-- Dialog Titles -->
+  <data name="Dialog.ConfirmDelete" xml:space="preserve">
+    <value>Confirm Delete</value>
+    <comment>Confirm delete dialog title</comment>
+  </data>
+  <data name="Dialog.RenamePlayset" xml:space="preserve">
+    <value>Renomear conjunto</value>
+    <comment>Rename playset dialog title</comment>
+  </data>
+  <data name="Dialog.EnterPlaysetName" xml:space="preserve">
+    <value>Nome para o conjunto:</value>
+    <comment>Enter playset name prompt</comment>
+  </data>
+  <data name="Dialog.ExportPlayset" xml:space="preserve">
+    <value>Exportar conjunto</value>
+    <comment>Export playset dialog title</comment>
+  </data>
+  <data name="Dialog.ImportPlayset" xml:space="preserve">
+    <value>Importar conjunto</value>
+    <comment>Import playset dialog title</comment>
+  </data>
+
+  <!-- Delete Confirmation Messages -->
+  <data name="DeleteConfirm.ActivePlayset" xml:space="preserve">
+    <value>O conjunto '{0}' está atualmente ATIVO.\n\nTem a certeza de que pretende eliminá-lo? Esta ação não pode ser anulada.</value>
+    <comment>Confirm delete active playset. {0} is the playset name</comment>
+  </data>
+  <data name="DeleteConfirm.InactivePlayset" xml:space="preserve">
+    <value>Tem a certeza de que pretende eliminar o conjunto '{0}'?\n\nEsta ação não pode ser anulada.</value>
+    <comment>Confirm delete inactive playset. {0} is the playset name</comment>
+  </data>
+
+  <!-- Default Playset Names -->
+  <data name="Playset.InitialName" xml:space="preserve">
+    <value>Initial Playset</value>
+    <comment>Default initial playset name</comment>
+  </data>
+  <data name="Playset.DefaultNameFormat" xml:space="preserve">
+    <value>Playset {0}</value>
+    <comment>Default playset name format. {0} is the number</comment>
+  </data>
+  <data name="Playset.CopyNameFormat" xml:space="preserve">
+    <value>{0} Copy</value>
+    <comment>Copy playset name format. {0} is the original name</comment>
+  </data>
+
+  <!-- Settings Validation Messages -->
+  <data name="SettingsValidation.KenshiValid" xml:space="preserve">
+    <value>✓ Valido - Instalação do Kenshi encontrada</value>
+    <comment>Kenshi installation is valid</comment>
+  </data>
+  <data name="SettingsValidation.PathNotSet" xml:space="preserve">
+    <value>⚠ Diretório não definido</value>
+    <comment>Path is not set warning</comment>
+  </data>
+  <data name="SettingsValidation.KenshiInvalid" xml:space="preserve">
+    <value>✗ Invalido - kenshi_x64.exe, kenshi.exe ou kenshi_GOG_x64.exe nao encontrado</value>
+    <comment>Kenshi installation is invalid</comment>
+  </data>
+  <data name="SettingsValidation.ModsValid" xml:space="preserve">
+    <value>✓ Valido - Econtrou {0} mod(s)</value>
+    <comment>O diretório de mods é válida. {0} mods disponiveis</comment>
+  </data>
+  <data name="SettingsValidation.ModsValidNoMods" xml:space="preserve">
+    <value>⚠ Diretório válido, mas nenhum .mod foi encontrado</value>
+    <comment>Mods folder exists but empty</comment>
+  </data>
+  <data name="SettingsValidation.FolderNotExists" xml:space="preserve">
+    <value>✗ Inválido - Diretório não existente</value>
+    <comment>Folder does not exist error</comment>
+  </data>
+
+  <!-- File Dialog Filters -->
+  <data name="FileDialog.SelectKenshiExe" xml:space="preserve">
+    <value>Selecione o executável do Kenshi (O arquivo .exe no diretório do Kenshi)</value>
+    <comment>Select Kenshi executable dialog prompt</comment>
+  </data>
+  <data name="FileDialog.SelectModsFolder" xml:space="preserve">
+    <value>Selecione o diretório dos Mods</value>
+    <comment>Select mods folder dialog prompt</comment>
+  </data>
+  <data name="FileDialog.SelectWorkshopFolder" xml:space="preserve">
+    <value>Selecione o diretório Workshop</value>
+    <comment>Select workshop folder dialog prompt</comment>
+  </data>
+  <data name="FileDialog.ConfigFilter" xml:space="preserve">
+    <value>Extensão de arquivos (*.cfg)|*.cfg|Todos (*.*)|*.*</value>
+    <comment>Configuration file filter for dialogs</comment>
+  </data>
+
+</root>
