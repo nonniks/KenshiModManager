@@ -87,12 +87,27 @@ namespace KenshiModManager.ViewModels
             }
             else
             {
+                Console.WriteLine("[MainViewModel] WARNING: No Kenshi path available - playset operations will be disabled");
                 _playsetRepository = null!;
                 _gameLauncher = null!;
             }
 
             _playsets = new ObservableCollection<PlaysetInfo>();
-            _statusMessage = "Ready";
+
+            // Set initial status message - show warning if autodetect failed
+            if (string.IsNullOrEmpty(_kenshiPath))
+            {
+                _statusMessage = Resources.Warning_AutoDetectFailed;
+                _statusSeverity = "Warning";
+                _showSettingsAction = true;
+                Console.WriteLine("[MainViewModel] Showing autodetect failed warning to user");
+            }
+            else
+            {
+                _statusMessage = Resources.Status_Ready;
+                _statusSeverity = "Info";
+                _showSettingsAction = false;
+            }
 
             LaunchGameCommand = new AsyncRelayCommand(LaunchGameAsync, CanLaunchGame);
             RefreshModsCommand = new AsyncRelayCommand(RefreshModsAsync);
@@ -105,6 +120,7 @@ namespace KenshiModManager.ViewModels
             ImportPlaysetCommand = new AsyncRelayCommand(ImportPlaysetAsync);
             SwitchPlaysetCommand = new AsyncRelayCommand<PlaysetInfo>(SwitchPlaysetAsync);
             SaveCurrentPlaysetCommand = new AsyncRelayCommand(SaveCurrentPlaysetAsync);
+            OpenSettingsCommand = new RelayCommand(OpenSettings);
 
             ModsTabViewModel = new ModsTabViewModel(_modManager);
             SettingsTabViewModel = new SettingsViewModel(_appSettings);
@@ -118,6 +134,7 @@ namespace KenshiModManager.ViewModels
             {
                 Interval = TimeSpan.FromSeconds(2)
             };
+
             _gameMonitorTimer.Tick += GameMonitorTimer_Tick;
             _gameMonitorTimer.Start();
 
@@ -153,6 +170,20 @@ namespace KenshiModManager.ViewModels
         {
             get => _statusMessage;
             set => SetProperty(ref _statusMessage, value);
+        }
+
+        private string _statusSeverity = "Info";
+        public string StatusSeverity
+        {
+            get => _statusSeverity;
+            set => SetProperty(ref _statusSeverity, value);
+        }
+
+        private bool _showSettingsAction;
+        public bool ShowSettingsAction
+        {
+            get => _showSettingsAction;
+            set => SetProperty(ref _showSettingsAction, value);
         }
 
         public ObservableCollection<PlaysetInfo> Playsets
@@ -202,6 +233,7 @@ namespace KenshiModManager.ViewModels
         public ICommand ImportPlaysetCommand { get; }
         public ICommand SwitchPlaysetCommand { get; }
         public ICommand SaveCurrentPlaysetCommand { get; }
+        public ICommand OpenSettingsCommand { get; }
 
         #endregion
 
@@ -296,6 +328,13 @@ namespace KenshiModManager.ViewModels
                     ((AsyncRelayCommand)LaunchGameCommand).RaiseCanExecuteChanged();
                 }
             }
+        }
+
+        private void OpenSettings()
+        {
+            ShowSettingsAction = false;
+            StatusSeverity = "Info";
+            Console.WriteLine("[MainViewModel] OpenSettings command triggered");
         }
 
         #endregion

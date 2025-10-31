@@ -211,6 +211,9 @@
         </Setter.Value>
       </Setter>
     </Style>
+    <!-- Converters -->
+    <converters:SeverityToBrushConverter x:Key="SeverityToBrushConverter"/>
+    <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
   </FrameworkElement.Resources>
   <FrameworkElement.DataContext>
     <vm:MainViewModel/>
@@ -219,6 +222,7 @@
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto"/>
       <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
       <RowDefinition Height="Auto"/>
     </Grid.RowDefinitions>
     <Border Grid.Row="0" Background="#252526" BorderBrush="#3E3E42" BorderThickness="0,0,0,1" Padding="20,15">
@@ -334,18 +338,45 @@
           <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-          <TextBlock Text="Path: " VerticalAlignment="Center" Foreground="#CCCCCC" FontSize="12" Margin="0,0,5,0"/>
+          <TextBlock Text="{x:Static properties:Resources.MainWindow_PathLabel}" VerticalAlignment="Center" Foreground="#CCCCCC" FontSize="12" Margin="0,0,5,0"/>
           <TextBlock VerticalAlignment="Center" Foreground="#999999" FontSize="12" Margin="0,0,30,0"
                      Text="{Binding KenshiPath}"/>
-          <TextBlock Text="Mods: " VerticalAlignment="Center" Foreground="#CCCCCC" FontSize="12" Margin="0,0,5,0"/>
+          <TextBlock Text="{x:Static properties:Resources.MainWindow_ModsLabel}" VerticalAlignment="Center" Foreground="#CCCCCC" FontSize="12" Margin="0,0,5,0"/>
           <TextBlock VerticalAlignment="Center" Foreground="#4EC9B0" FontWeight="Bold" FontSize="12"
                      Text="{Binding ActiveModsCount}"/>
         </StackPanel>
-        <Button Grid.Column="2" Content="🔄 Refresh" Style="{StaticResource ModernButtonStyle}" MinWidth="100"
+        <Button Grid.Column="2" Content="{x:Static properties:Resources.MainWindow_RefreshButton}" Style="{StaticResource ModernButtonStyle}" MinWidth="100"
                 Margin="0,0,10,0" Command="{Binding RefreshModsCommand}"/>
-        <Button Grid.Column="3" Content="▶ Launch" Style="{StaticResource LaunchButtonStyle}" MinWidth="120"
+        <Button Grid.Column="3" Content="{x:Static properties:Resources.MainWindow_LaunchButton}" Style="{StaticResource LaunchButtonStyle}" MinWidth="120"
                 Command="{Binding LaunchGameCommand}"/>
       </Grid>
     </Border>
+
+    <!-- Status Bar with Notifications -->
+    <StatusBar Grid.Row="3" Background="{Binding StatusSeverity, Converter={StaticResource SeverityToBrushConverter}}"
+               Height="32" Padding="15,0">
+      <StatusBar.ItemsPanel>
+        <ItemsPanelTemplate>
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+          </Grid>
+        </ItemsPanelTemplate>
+      </StatusBar.ItemsPanel>
+
+      <StatusBarItem Grid.Column="0">
+        <TextBlock Text="{Binding StatusMessage}" Foreground="White" FontSize="12" VerticalAlignment="Center"/>
+      </StatusBarItem>
+
+      <StatusBarItem Grid.Column="1">
+        <Button Content="Open Settings"
+                Command="{Binding OpenSettingsCommand}"
+                Visibility="{Binding ShowSettingsAction, Converter={StaticResource BoolToVisConverter}}"
+                Style="{StaticResource ModernButtonStyle}"
+                Padding="10,5" FontSize="11" Margin="5,0,0,0"/>
+      </StatusBarItem>
+    </StatusBar>
   </Grid>
 </Window>
