@@ -1,8 +1,11 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using AutoUpdaterDotNET;
 using KenshiModManager.Commands;
 using KenshiModManager.Services;
 
@@ -18,13 +21,15 @@ namespace KenshiModManager.ViewModels
         private string _changelog = string.Empty;
         private string _downloadUrl = string.Empty;
         private bool _isLoadingChangelog = false;
+        private readonly UpdateInfoEventArgs? _updateArgs;
 
-        public UpdateDialogViewModel(string currentVersion, string installedVersion, string downloadUrl)
+        public UpdateDialogViewModel(string currentVersion, string installedVersion, string downloadUrl, UpdateInfoEventArgs? updateArgs = null)
         {
             _currentVersion = currentVersion ?? string.Empty;
             _installedVersion = installedVersion ?? string.Empty;
             _changelog = "Loading changelog from GitHub...";
             _downloadUrl = downloadUrl ?? string.Empty;
+            _updateArgs = updateArgs;
 
             DownloadCommand = new RelayCommand(Download, CanDownload);
             SkipCommand = new RelayCommand(Skip);
@@ -48,24 +53,64 @@ namespace KenshiModManager.ViewModels
 
             try
             {
-                // Convert version to GitHub tag format (e.g., "1.1.0" -> "v1.1.0")
-                string tag = GitHubReleaseService.VersionToTag(_currentVersion);
-                Console.WriteLine($"[UpdateDialogViewModel] Fetching changelog for tag: {tag}");
+                // Fetch last 5 releases from GitHub API
+                Console.WriteLine($"[UpdateDialogViewModel] Fetching last 5 releases from GitHub...");
+                var releases = await GitHubReleaseService.GetReleasesAsync(count: 5);
 
-                // Fetch release info from GitHub API
-                var release = await GitHubReleaseService.GetReleaseByTagAsync(tag);
-
-                if (release != null && !string.IsNullOrWhiteSpace(release.Body))
+                if (releases != null && releases.Count > 0)
                 {
-                    // Extract only the Changes section from release body
-                    Changelog = ExtractChangesSection(release.Body);
-                    Console.WriteLine($"[UpdateDialogViewModel] Successfully loaded changelog ({Changelog.Length} chars)");
+                    // Build combined changelog: Latest + History
+                    var changelogBuilder = new StringBuilder();
+
+                    // Latest release section (first in the list)
+                    var latestRelease = releases[0];
+                    changelogBuilder.AppendLine("╔══════════════════════════════════════════╗");
+                    changelogBuilder.AppendLine($"║   📋 What's New in {latestRelease.TagName}");
+                    changelogBuilder.AppendLine("╚══════════════════════════════════════════╝");
+                    changelogBuilder.AppendLine();
+                    changelogBuilder.AppendLine(ExtractChangesSection(latestRelease.Body ?? ""));
+                    changelogBuilder.AppendLine();
+
+                    // History section (if there are more releases)
+                    if (releases.Count > 1)
+                    {
+                        changelogBuilder.AppendLine("─────────────────────────────────────────────");
+                        changelogBuilder.AppendLine();
+                        changelogBuilder.AppendLine("╔══════════════════════════════════════════╗");
+                        changelogBuilder.AppendLine("║   📜 Release History");
+                        changelogBuilder.AppendLine("╚══════════════════════════════════════════╝");
+                        changelogBuilder.AppendLine();
+
+                        // Add other releases
+                        foreach (var release in releases.Skip(1))
+                        {
+                            if (!string.IsNullOrWhiteSpace(release.Body))
+                            {
+                                var titleLine = release.Body.Split('\n').FirstOrDefault(l => l.StartsWith("###"));
+                                if (titleLine != null)
+                                {
+                                    titleLine = titleLine.Replace("###", "").Trim();
+                                }
+                                else
+                                {
+                                    titleLine = $"{release.TagName} - {release.Name}";
+                                }
+
+                                changelogBuilder.AppendLine($"● {titleLine}");
+                                changelogBuilder.AppendLine(ExtractChangesSection(release.Body));
+                                changelogBuilder.AppendLine();
+                            }
+                        }
+                    }
+
+                    Changelog = changelogBuilder.ToString().TrimEnd();
+                    Console.WriteLine($"[UpdateDialogViewModel] Successfully loaded changelog ({Changelog.Length} chars) from {releases.Count} releases");
                 }
                 else
                 {
                     // Fallback message if GitHub API fails
                     Changelog = "No changelog available.\n\nVisit the GitHub releases page for more information:\nhttps://github.com/nonniks/KenshiModManager/releases";
-                    Console.WriteLine("[UpdateDialogViewModel] No changelog found, using fallback");
+                    Console.WriteLine("[UpdateDialogViewModel] No releases found, using fallback");
                 }
             }
             catch (Exception ex)
@@ -145,21 +190,43 @@ namespace KenshiModManager.ViewModels
         {
             try
             {
-                Console.WriteLine($"[UpdateDialogViewModel] Opening download URL: {_downloadUrl}");
+                Console.WriteLine($"[UpdateDialogViewModel] Starting automatic update...");
 
-                Process.Start(new ProcessStartInfo
+                if (_updateArgs != null)
                 {
-                    FileName = _downloadUrl,
-                    UseShellExecute = true
-                });
+                    Console.WriteLine("[UpdateDialogViewModel] Calling AutoUpdater.DownloadUpdate()");
 
-                CloseDialog();
+                    if (AutoUpdater.DownloadUpdate(_updateArgs))
+                    {
+                        Console.WriteLine("[UpdateDialogViewModel] Update download started successfully");
+                        CloseDialog();
+                    }
+                    else
+                    {
+                        Console.WriteLine("[UpdateDialogViewModel] AutoUpdater.DownloadUpdate() returned false");
+                        MessageBox.Show(
+                            "Unable to start automatic update. Please download manually.",
+                            "Update Error",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Warning);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"[UpdateDialogViewModel] UpdateArgs not available, opening browser: {_downloadUrl}");
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = _downloadUrl,
+                        UseShellExecute = true
+                    });
+                    CloseDialog();
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[UpdateDialogViewModel] Error opening download URL: {ex.Message}");
+                Console.WriteLine($"[UpdateDialogViewModel] Error starting update: {ex.Message}");
                 MessageBox.Show(
-                    $"Unable to open download link: {ex.Message}",
+                    $"Unable to start update: {ex.Message}\n\nPlease download manually from:\n{_downloadUrl}",
                     "Error",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);

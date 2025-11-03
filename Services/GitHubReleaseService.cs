@@ -92,6 +92,42 @@ namespace KenshiModManager.Services
         }
 
         /// <summary>
+        /// Fetches multiple releases (for changelog history)
+        /// </summary>
+        /// <param name="count">Number of releases to fetch (default: 5)</param>
+        /// <returns>List of releases or null if error occurred</returns>
+        public static async Task<List<GitHubRelease>?> GetReleasesAsync(int count = 5)
+        {
+            try
+            {
+                string url = $"https://api.github.com/repos/{OwnerRepo}/releases?per_page={count}";
+                Console.WriteLine($"[GitHubReleaseService] Fetching {count} releases from: {url}");
+
+                var response = await _httpClient.GetAsync(url);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"[GitHubReleaseService] GitHub API returned status: {response.StatusCode}");
+                    return null;
+                }
+
+                string json = await response.Content.ReadAsStringAsync();
+                var releases = JsonSerializer.Deserialize<List<GitHubRelease>>(json, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                Console.WriteLine($"[GitHubReleaseService] Successfully fetched {releases?.Count ?? 0} releases");
+                return releases;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[GitHubReleaseService] Error fetching releases: {ex.Message}");
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Converts version string to GitHub tag format
         /// </summary>
         /// <param name="version">Version string (e.g., "1.1.0.0" or "1.1.0")</param>

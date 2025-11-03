@@ -7,7 +7,7 @@
         xmlns:converters="clr-namespace:KenshiModManager.Converters"
         mc:Ignorable="d"
         Title="{x:Static properties:Resources.UpdateDialog_Title}"
-        Height="550" Width="650"
+        Height="700" Width="650"
         WindowStartupLocation="CenterOwner"
         Background="#1E1E1E"
         ResizeMode="NoResize"
