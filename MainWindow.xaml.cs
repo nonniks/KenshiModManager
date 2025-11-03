@@ -21,10 +21,11 @@ public partial class MainWindow : Window
         {
             viewModel.SettingsTabViewModel.ValidateAllPaths();
 
-            if (viewModel.RefreshModsCommand.CanExecute(null))
-            {
-                viewModel.RefreshModsCommand.Execute(null);
-            }
+            // DON'T call RefreshModsCommand here - it will reset ActivePlaysetMods!
+            // The playset is already loaded in MainViewModel constructor -> LoadPlaysets() -> SwitchToPlaysetAsync()
+            // RefreshModsCommand should only be called manually by user clicking "Refresh" button
+
+            System.Console.WriteLine("[MainWindow] Skipping automatic RefreshModsCommand - playset already loaded");
         }
     }
 

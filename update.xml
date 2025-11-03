@@ -1,15 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <item>
-  <version>1.1.0.0</version>
-  <url>https://github.com/nonniks/KenshiModManager/releases/download/v1.1.0/KMM_portable_v1.1.0.zip</url>
+  <version>1.2.0.0</version>
+  <url>https://github.com/nonniks/KenshiModManager/releases/download/v1.2.0/KenshiModManager_setup_v1.2.0.exe</url>
   <mandatory>false</mandatory>
-  <changelog>
-    - Added language switcher (EN/RU/PT) with full localization
-    - Improved Kenshi executable detection and path validation
-    - Mods counter scans subfolders and auto-updates
-    - Atomic settings.json saving for improved reliability
-    - New dynamic status bar with notifications
-    - Full UI and notification localization
-    - Many minor bug fixes and improved stability
-  </changelog>
 </item>

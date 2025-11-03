@@ -125,9 +125,12 @@ namespace KenshiModManager.ViewModels
             ModsTabViewModel = new ModsTabViewModel(_modManager);
             SettingsTabViewModel = new SettingsViewModel(_appSettings);
 
+            ModsTabViewModel.ActivePlaysetMods.CollectionChanged += OnActiveModsCountChanged;
+
             ModsTabViewModel.SetSavePlaysetCallback(() =>
             {
-                _ = SaveCurrentPlaysetAsync();
+                // Execute synchronously to ensure save completes before window closes
+                SaveCurrentPlaysetAsync().Wait();
             });
 
             _gameMonitorTimer = new DispatcherTimer
@@ -708,6 +711,7 @@ namespace KenshiModManager.ViewModels
                 }
 
                 string? previousPlaysetPath = _currentPlaysetFilePath;
+                Console.WriteLine($"[MainViewModel] Temporarily clearing _currentPlaysetFilePath (was: {previousPlaysetPath ?? "(null)"})");
                 _currentPlaysetFilePath = null;
 
                 var modEntries = _playsetRepository.LoadPlaysetModsWithState(playsetFile);
@@ -741,6 +745,7 @@ namespace KenshiModManager.ViewModels
                 }
 
                 _currentPlaysetFilePath = playsetFile;
+                Console.WriteLine($"[MainViewModel] Set _currentPlaysetFilePath = {Path.GetFileName(playsetFile)}");
 
                 ActiveModsCount = ModsTabViewModel.ActivePlaysetMods.Count;
                 StatusMessage = string.Format(Resources.Status_PlaysetLoaded, playset.Name, ActiveModsCount);
@@ -755,8 +760,15 @@ namespace KenshiModManager.ViewModels
 
         private async Task SaveCurrentPlaysetAsync()
         {
+            Console.WriteLine($"[MainViewModel] SaveCurrentPlaysetAsync called");
+            Console.WriteLine($"[MainViewModel] _currentPlaysetFilePath: {_currentPlaysetFilePath ?? "(null)"}");
+            Console.WriteLine($"[MainViewModel] ActivePlaysetMods count: {ModsTabViewModel.ActivePlaysetMods.Count}");
+
             if (string.IsNullOrEmpty(_currentPlaysetFilePath) || _playsetRepository == null)
+            {
+                Console.WriteLine($"[MainViewModel] WARNING: Cannot save - _currentPlaysetFilePath is null or empty!");
                 return;
+            }
 
             try
             {
@@ -769,14 +781,20 @@ namespace KenshiModManager.ViewModels
                 }
 
                 _playsetRepository.SaveModsToPlaysetWithState(_currentPlaysetFilePath, ModsTabViewModel.ActivePlaysetMods);
-                Console.WriteLine($"[MainViewModel] Saved playset with state to {Path.GetFileName(_currentPlaysetFilePath)}");
+                Console.WriteLine($"[MainViewModel] ✓ Saved playset with {ModsTabViewModel.ActivePlaysetMods.Count} mods to {Path.GetFileName(_currentPlaysetFilePath)}");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[MainViewModel] Error saving current playset: {ex}");
+                Console.WriteLine($"[MainViewModel] ERROR saving current playset: {ex}");
             }
 
             await Task.CompletedTask;
+        }
+
+        private void OnActiveModsCountChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            ActiveModsCount = ModsTabViewModel.ActivePlaysetMods.Count;
+            Console.WriteLine($"[MainViewModel] ActiveModsCount updated: {ActiveModsCount}");
         }
 
         #endregion

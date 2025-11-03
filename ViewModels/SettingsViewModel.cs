@@ -2,10 +2,14 @@ using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Windows;
 using System.Windows.Input;
+using AutoUpdaterDotNET;
 using KenshiModManager.Commands;
 using KenshiModManager.Core;
 using KenshiModManager.Properties;
+using KenshiModManager.Views;
 using KenshiLib.Core;
 using Microsoft.Win32;
 using Ookii.Dialogs.Wpf;
@@ -34,6 +38,8 @@ namespace KenshiModManager.ViewModels
         private string _workshopPathStatus = string.Empty;
         private string _selectedLanguage = string.Empty;
         private LanguageOption? _selectedLanguageOption;
+        private string _installedVersion = string.Empty;
+        private string _settingsPath = string.Empty;
 
         public SettingsViewModel(AppSettings appSettings)
         {
@@ -44,6 +50,8 @@ namespace KenshiModManager.ViewModels
             BrowseWorkshopPathCommand = new RelayCommand(BrowseWorkshopPath);
             ResetToAutoDetectCommand = new RelayCommand(ResetToAutoDetect);
             SaveSettingsCommand = new RelayCommand(SaveSettings);
+            CheckForUpdatesCommand = new RelayCommand(CheckForUpdates);
+
             AvailableLanguages = new ObservableCollection<LanguageOption>
             {
                 new() { Code = "en", DisplayName = "English" },
@@ -53,6 +61,13 @@ namespace KenshiModManager.ViewModels
 
             string currentLang = LocalizationManager.GetCurrentLanguage();
             SelectedLanguageOption = AvailableLanguages.FirstOrDefault(l => l.Code == currentLang);
+
+            // Get installed version
+            var version = Assembly.GetExecutingAssembly().GetName().Version;
+            InstalledVersion = version != null ? $"v{version.Major}.{version.Minor}.{version.Build}" : "v?.?.?";
+
+            // Get settings path for user support
+            SettingsPath = AppSettings.GetSettingsPath();
 
             LoadPaths();
         }
@@ -167,6 +182,7 @@ namespace KenshiModManager.ViewModels
         public ICommand BrowseWorkshopPathCommand { get; }
         public ICommand ResetToAutoDetectCommand { get; }
         public ICommand SaveSettingsCommand { get; }
+        public ICommand CheckForUpdatesCommand { get; }
 
         public string SelectedLanguage
         {
@@ -193,6 +209,18 @@ namespace KenshiModManager.ViewModels
         }
 
         public ObservableCollection<LanguageOption> AvailableLanguages { get; }
+
+        public string InstalledVersion
+        {
+            get => _installedVersion;
+            set => SetProperty(ref _installedVersion, value);
+        }
+
+        public string SettingsPath
+        {
+            get => _settingsPath;
+            set => SetProperty(ref _settingsPath, value);
+        }
 
         private void LoadPaths()
         {
@@ -526,6 +554,80 @@ namespace KenshiModManager.ViewModels
             }
 
             Console.WriteLine("[SettingsViewModel] Settings saved");
+        }
+
+        private void CheckForUpdates()
+        {
+            Console.WriteLine("[SettingsViewModel] Manual update check initiated");
+
+            AutoUpdater.CheckForUpdateEventHandler manualCheckHandler = (args) =>
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    if (args.Error != null)
+                    {
+                        MessageBox.Show(
+                            Resources.UpdateCheck_Error,
+                            "Kenshi Mod Manager",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Warning);
+                        Console.WriteLine($"[SettingsViewModel] Update check error: {args.Error.Message}");
+                    }
+                    else if (args.IsUpdateAvailable)
+                    {
+                        Console.WriteLine($"[SettingsViewModel] Update available: {args.CurrentVersion} -> {args.InstalledVersion}");
+
+                        try
+                        {
+                            var dialog = new UpdateDialogWindow();
+                            dialog.DataContext = new UpdateDialogViewModel(
+                                args.CurrentVersion?.ToString() ?? "Unknown",
+                                args.InstalledVersion?.ToString() ?? "Unknown",
+                                args.DownloadURL
+                            );
+
+                            if (Application.Current.MainWindow != null && Application.Current.MainWindow.IsLoaded)
+                            {
+                                dialog.Owner = Application.Current.MainWindow;
+                            }
+
+                            dialog.ShowDialog();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"[SettingsViewModel] Error showing update dialog: {ex.Message}");
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show(
+                            Resources.UpdateCheck_NoUpdateAvailable,
+                            "Kenshi Mod Manager",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Information);
+                        Console.WriteLine("[SettingsViewModel] No update available");
+                    }
+                });
+            };
+
+            // Add handler temporarily
+            AutoUpdater.CheckForUpdateEvent += manualCheckHandler;
+
+            try
+            {
+                string updateXmlUrl = "https://raw.githubusercontent.com/nonniks/KenshiModManager/master/update.xml";
+                AutoUpdater.Start(updateXmlUrl);
+            }
+            finally
+            {
+                Task.Delay(100).ContinueWith(_ =>
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        AutoUpdater.CheckForUpdateEvent -= manualCheckHandler;
+                    });
+                });
+            }
         }
 
         public class LanguageOption
