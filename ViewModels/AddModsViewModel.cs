@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 using KenshiModManager.Commands;
@@ -15,6 +16,7 @@ namespace KenshiModManager.ViewModels
         private readonly ObservableCollection<ModInfo> _allMods;
         private readonly ObservableCollection<ModInfo> _activePlaysetMods;
         private readonly Action _savePlaysetCallback;
+        private readonly Action _closeWindowAction;
 
         private string _searchText = string.Empty;
         private string _sortBy = "Name";
@@ -25,11 +27,13 @@ namespace KenshiModManager.ViewModels
         public AddModsViewModel(
             ObservableCollection<ModInfo> allMods,
             ObservableCollection<ModInfo> activePlaysetMods,
-            Action savePlaysetCallback)
+            Action savePlaysetCallback,
+            Action closeWindowAction)
         {
             _allMods = allMods ?? throw new ArgumentNullException(nameof(allMods));
             _activePlaysetMods = activePlaysetMods ?? throw new ArgumentNullException(nameof(activePlaysetMods));
             _savePlaysetCallback = savePlaysetCallback ?? throw new ArgumentNullException(nameof(savePlaysetCallback));
+            _closeWindowAction = closeWindowAction ?? throw new ArgumentNullException(nameof(closeWindowAction));
 
             _availableMods = new ObservableCollection<ModSelectionItem>();
             _filteredMods = new ObservableCollection<ModSelectionItem>();
@@ -110,6 +114,12 @@ namespace KenshiModManager.ViewModels
             {
                 await System.Threading.Tasks.Task.Delay(10);
 
+                // Unsubscribe from old items to prevent memory leaks
+                foreach (var item in _availableMods)
+                {
+                    item.PropertyChanged -= OnModSelectionChanged;
+                }
+
                 _availableMods.Clear();
 
                 var activeMods = _activePlaysetMods.Select(m => m.Name).ToHashSet();
@@ -118,7 +128,9 @@ namespace KenshiModManager.ViewModels
 
                 foreach (var mod in modsToAdd)
                 {
-                    _availableMods.Add(new ModSelectionItem(mod));
+                    var item = new ModSelectionItem(mod);
+                    item.PropertyChanged += OnModSelectionChanged;
+                    _availableMods.Add(item);
                 }
 
                 ApplyFilter();
@@ -130,6 +142,15 @@ namespace KenshiModManager.ViewModels
             finally
             {
                 IsLoading = false;
+            }
+        }
+
+        private void OnModSelectionChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ModSelectionItem.IsSelected))
+            {
+                OnPropertyChanged(nameof(SelectedCount));
+                OnPropertyChanged(nameof(SelectedCountText));
             }
         }
 
@@ -217,12 +238,14 @@ namespace KenshiModManager.ViewModels
         {
             try
             {
-                Console.WriteLine($"[AddModsViewModel] AddSelectedMods called - checking selection...");
+                Console.WriteLine($"[AddModsViewModel] === AddSelectedMods called ===");
                 Console.WriteLine($"[AddModsViewModel] Total available mods: {_availableMods.Count}");
+                Console.WriteLine($"[AddModsViewModel] Current active playset mods: {_activePlaysetMods.Count}");
 
                 var selectedMods = _availableMods.Where(m => m.IsSelected).Select(m => m.ModInfo).ToList();
 
                 Console.WriteLine($"[AddModsViewModel] Selected mods count: {selectedMods.Count}");
+                Console.WriteLine($"[AddModsViewModel] Selected mod names: {string.Join(", ", selectedMods.Select(m => m.Name))}");
 
                 if (selectedMods.Count == 0)
                 {
@@ -230,19 +253,45 @@ namespace KenshiModManager.ViewModels
                     return;
                 }
 
+                // Check for duplicates before adding
+                var existingModNames = _activePlaysetMods.Select(m => m.Name).ToHashSet();
+                var duplicates = selectedMods.Where(m => existingModNames.Contains(m.Name)).ToList();
+
+                if (duplicates.Count > 0)
+                {
+                    Console.WriteLine($"[AddModsViewModel] WARNING: Found {duplicates.Count} duplicates in playset BEFORE adding:");
+                    foreach (var dup in duplicates)
+                    {
+                        Console.WriteLine($"[AddModsViewModel]   - Duplicate: {dup.Name}");
+                    }
+                }
+
                 foreach (var mod in selectedMods)
                 {
+                    // Skip if already in playset
+                    if (existingModNames.Contains(mod.Name))
+                    {
+                        Console.WriteLine($"[AddModsViewModel] SKIPPING duplicate mod: {mod.Name}");
+                        continue;
+                    }
+
                     Console.WriteLine($"[AddModsViewModel] Adding mod: {mod.Name}");
 
                     int newPosition = _activePlaysetMods.Count;
 
+                    // FIRST add to collection, THEN set properties to avoid triggering duplicate add in OnModInfoPropertyChanged
+                    _activePlaysetMods.Add(mod);
+                    existingModNames.Add(mod.Name); // Track added mods
+
+                    // Set properties AFTER adding (PropertyChanged events will be ignored if mod is already in collection)
                     mod.IsEnabled = true;
                     mod.LoadOrder = newPosition;
-
-                    _activePlaysetMods.Add(mod);
                 }
 
                 _savePlaysetCallback();
+
+                // Close window after successful add
+                _closeWindowAction?.Invoke();
 
                 Console.WriteLine($"[AddModsViewModel] Successfully added {selectedMods.Count} mods to playset");
             }

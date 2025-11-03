@@ -216,6 +216,61 @@
     <value>Язык</value>
     <comment>Language section header</comment>
   </data>
+  <data name="SettingsTab.CheckForUpdates" xml:space="preserve">
+    <value>Проверить обновления</value>
+    <comment>Check for updates button</comment>
+  </data>
+  <data name="SettingsTab.InstalledVersion" xml:space="preserve">
+    <value>Установленная версия:</value>
+    <comment>Installed version label</comment>
+  </data>
+  <data name="UpdateCheck_NoUpdateAvailable" xml:space="preserve">
+    <value>Вы используете последнюю версию.</value>
+    <comment>Message when no update is available</comment>
+  </data>
+  <data name="UpdateCheck_UpdateAvailable" xml:space="preserve">
+    <value>Доступно обновление!</value>
+    <comment>Message when update is available</comment>
+  </data>
+  <data name="UpdateCheck_Error" xml:space="preserve">
+    <value>Не удалось проверить обновления. Проверьте подключение к Интернету и повторите попытку позже.</value>
+    <comment>Message when update check fails</comment>
+  </data>
+
+  <!-- Update Dialog Window -->
+  <data name="UpdateDialog_Title" xml:space="preserve">
+    <value>Доступно обновление</value>
+    <comment>Update dialog window title</comment>
+  </data>
+  <data name="UpdateDialog_NewVersionAvailable" xml:space="preserve">
+    <value>Доступна новая версия</value>
+    <comment>New version available header</comment>
+  </data>
+  <data name="UpdateDialog_CurrentVersion" xml:space="preserve">
+    <value>Новая версия:</value>
+    <comment>New version label</comment>
+  </data>
+  <data name="UpdateDialog_InstalledVersion" xml:space="preserve">
+    <value>Текущая версия:</value>
+    <comment>Current/installed version label</comment>
+  </data>
+  <data name="UpdateDialog_Changelog" xml:space="preserve">
+    <value>Что нового:</value>
+    <comment>Changelog section header</comment>
+  </data>
+  <data name="UpdateDialog_DownloadButton" xml:space="preserve">
+    <value>Скачать сейчас</value>
+    <comment>Download button text</comment>
+  </data>
+  <data name="UpdateDialog_SkipButton" xml:space="preserve">
+    <value>Пропустить версию</value>
+    <comment>Skip button text</comment>
+  </data>
+  <data name="UpdateDialog_RemindButton" xml:space="preserve">
+    <value>Напомнить позже</value>
+    <comment>Remind later button text</comment>
+  </data>
+
   <data name="SettingsTab.ComingSoon" xml:space="preserve">
     <value>Скоро...</value>
     <comment>Coming soon placeholder text</comment>

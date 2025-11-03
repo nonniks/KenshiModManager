@@ -196,7 +196,7 @@
         </FrameworkElement.Style>
       </TextBox>
       <ComboBox Grid.Column="1" Width="150" Height="35" Margin="10,0,0,0" Background="#2D2D30" Foreground="#CCCCCC"
-                BorderBrush="#3E3E42" Padding="10,5" SelectedValue="{Binding SortBy}">
+                BorderBrush="#3E3E42" Padding="10,5" SelectedValuePath="Tag" SelectedValue="{Binding SortBy, Mode=TwoWay}">
         <ComboBoxItem Content="{x:Static properties:Resources.AddModsWindow_SortByName}" Tag="Name"/>
         <ComboBoxItem Content="{x:Static properties:Resources.AddModsWindow_SortByAuthor}" Tag="Author"/>
         <ComboBoxItem Content="{x:Static properties:Resources.AddModsWindow_SortBySize}" Tag="Size"/>
@@ -236,7 +236,9 @@
                       Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Inverted}">
           <ListBox MouseDoubleClick="ModsListBox_MouseDoubleClick" x:Name="ModsListBox"
                    ItemContainerStyle="{StaticResource ModListItemStyle}" Background="Transparent" BorderThickness="0"
-                   Padding="10" SelectionMode="Extended" ItemsSource="{Binding FilteredMods}">
+                   Padding="10" SelectionMode="Extended" ItemsSource="{Binding FilteredMods}"
+                   ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                   ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ItemsControl.ItemTemplate>
               <DataTemplate>
                 <Grid Height="60" Margin="5">
@@ -283,7 +285,7 @@
                  Text="{Binding SelectedCountText, Mode=OneWay}"/>
       <Button Click="CancelButton_Click" Grid.Column="1" Content="{x:Static properties:Resources.AddModsWindow_Cancel}"
               Style="{StaticResource ModernButtonStyle}" MinWidth="120" Margin="0,0,10,0"/>
-      <Button Click="AddButton_Click" Grid.Column="2" Content="{x:Static properties:Resources.AddModsWindow_AddToPlayset}"
+      <Button Grid.Column="2" Content="{x:Static properties:Resources.AddModsWindow_AddToPlayset}"
               Style="{StaticResource PrimaryButtonStyle}" MinWidth="160"
               Command="{Binding AddSelectedModsCommand}"/>
     </Grid>

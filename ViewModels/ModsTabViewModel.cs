@@ -377,7 +377,11 @@ public class ModsTabViewModel : ViewModelBase
   private void OpenAddModsWindow()
   {
     AddModsWindow addModsWindow = new AddModsWindow();
-    addModsWindow.DataContext = (object) new AddModsViewModel(this.AllMods, this.ActivePlaysetMods, new Action(this.SavePlaysetOrder));
+    addModsWindow.DataContext = (object) new AddModsViewModel(
+      this.AllMods,
+      this.ActivePlaysetMods,
+      new Action(this.SavePlaysetOrder),
+      () => { addModsWindow.DialogResult = true; addModsWindow.Close(); });
     if (!addModsWindow.ShowDialog().GetValueOrDefault())
       return;
     this.ApplyFilter();

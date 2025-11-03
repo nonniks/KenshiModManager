@@ -91,6 +91,23 @@ namespace KenshiModManager.Properties {
         public static string SettingsTab_ResetToAutoDetect => GetString("SettingsTab.ResetToAutoDetect");
         public static string SettingsTab_SaveSettings => GetString("SettingsTab.SaveSettings");
         public static string SettingsTab_Language => GetString("SettingsTab.Language");
+        public static string SettingsTab_CheckForUpdates => GetString("SettingsTab.CheckForUpdates");
+        public static string SettingsTab_InstalledVersion => GetString("SettingsTab.InstalledVersion");
+
+        // UpdateCheck resources
+        public static string UpdateCheck_NoUpdateAvailable => GetString("UpdateCheck_NoUpdateAvailable");
+        public static string UpdateCheck_UpdateAvailable => GetString("UpdateCheck_UpdateAvailable");
+        public static string UpdateCheck_Error => GetString("UpdateCheck_Error");
+
+        // UpdateDialog resources
+        public static string UpdateDialog_Title => GetString("UpdateDialog_Title");
+        public static string UpdateDialog_NewVersionAvailable => GetString("UpdateDialog_NewVersionAvailable");
+        public static string UpdateDialog_CurrentVersion => GetString("UpdateDialog_CurrentVersion");
+        public static string UpdateDialog_InstalledVersion => GetString("UpdateDialog_InstalledVersion");
+        public static string UpdateDialog_Changelog => GetString("UpdateDialog_Changelog");
+        public static string UpdateDialog_DownloadButton => GetString("UpdateDialog_DownloadButton");
+        public static string UpdateDialog_SkipButton => GetString("UpdateDialog_SkipButton");
+        public static string UpdateDialog_RemindButton => GetString("UpdateDialog_RemindButton");
 
         // AddModsWindow resources
         public static string AddModsWindow_Title => GetString("AddModsWindow.Title");

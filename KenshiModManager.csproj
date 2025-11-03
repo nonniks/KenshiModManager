@@ -1,5 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net9.0-windows</TargetFramework>
@@ -7,17 +6,15 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Resources\app.ico</ApplicationIcon>
-
     <!-- Application metadata -->
-    <Version>1.1.0</Version>
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
-    <FileVersion>1.1.0.0</FileVersion>
-    <Company>KenshiTR</Company>
+    <Version>1.2.0</Version>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
+    <FileVersion>1.2.0.0</FileVersion>
+    <Company>Doofenshmirtz Evil Incorporated</Company>
     <Product>Kenshi Mod Manager</Product>
-    <Authors>KenshiTR</Authors>
+    <Authors>Aze4ka</Authors>
     <Description>Modern mod manager for Kenshi with playset management</Description>
     <Copyright>Copyright © 2025</Copyright>
-
     <!-- Publish optimization settings -->
     <SatelliteResourceLanguages>en-US;ru;pt</SatelliteResourceLanguages>
     <DebugType>none</DebugType>
@@ -25,22 +22,18 @@
     <PublishTrimmed>false</PublishTrimmed>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="KenshiLib" Version="1.0.1" />
     <PackageReference Include="Autoupdater.NET.Official" Version="1.9.2" />
     <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
   </ItemGroup>
-
   <!-- <ItemGroup>
     <ProjectReference Include="..\KenshiLib\KenshiLib.csproj" />
   </ItemGroup> -->
-
   <ItemGroup>
     <Resource Include="Resources\app.ico" />
     <Resource Include="Resources\app.png" />
   </ItemGroup>
-
   <!-- Enable resource code generation -->
   <ItemGroup>
     <Compile Remove="Properties\Resources.Designer.cs" />
@@ -50,53 +43,44 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-
   <!-- Post-publish: Move satellite assemblies to locales folder and remove debug files -->
   <Target Name="OrganizePublishFiles" AfterTargets="Publish">
     <!-- Create locales directory -->
     <MakeDir Directories="$(PublishDir)locales\en" Condition="Exists('$(PublishDir)en')" />
     <MakeDir Directories="$(PublishDir)locales\ru" Condition="Exists('$(PublishDir)ru')" />
     <MakeDir Directories="$(PublishDir)locales\pt" Condition="Exists('$(PublishDir)pt')" />
-
     <!-- Move English resources -->
     <ItemGroup>
       <EnResources Include="$(PublishDir)en\**\*.*" />
     </ItemGroup>
     <Move SourceFiles="@(EnResources)" DestinationFolder="$(PublishDir)locales\en\%(RecursiveDir)" Condition="Exists('$(PublishDir)en')" />
     <RemoveDir Directories="$(PublishDir)en" Condition="Exists('$(PublishDir)en')" />
-
     <!-- Move Russian resources -->
     <ItemGroup>
       <RuResources Include="$(PublishDir)ru\**\*.*" />
     </ItemGroup>
     <Move SourceFiles="@(RuResources)" DestinationFolder="$(PublishDir)locales\ru\%(RecursiveDir)" Condition="Exists('$(PublishDir)ru')" />
     <RemoveDir Directories="$(PublishDir)ru" Condition="Exists('$(PublishDir)ru')" />
-
     <!-- Move Portuguese resources -->
     <ItemGroup>
       <PtResources Include="$(PublishDir)pt\**\*.*" />
     </ItemGroup>
     <Move SourceFiles="@(PtResources)" DestinationFolder="$(PublishDir)locales\pt\%(RecursiveDir)" Condition="Exists('$(PublishDir)pt')" />
     <RemoveDir Directories="$(PublishDir)pt" Condition="Exists('$(PublishDir)pt')" />
-
     <!-- Remove createdump.exe if exists -->
     <Delete Files="$(PublishDir)createdump.exe" Condition="Exists('$(PublishDir)createdump.exe')" />
-
     <!-- Remove any remaining .pdb files -->
     <ItemGroup>
       <PdbFiles Include="$(PublishDir)**\*.pdb" />
     </ItemGroup>
     <Delete Files="@(PdbFiles)" />
-
     <Message Text="✓ Locales moved to locales/ folder" Importance="high" />
     <Message Text="✓ Debug files removed" Importance="high" />
   </Target>
-
 </Project>
