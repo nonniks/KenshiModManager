@@ -45,7 +45,7 @@ namespace KenshiModManager.Properties {
 
         // Dynamic property access using ResourceManager
         private static string GetString(string name) {
-            return ResourceManager.GetString(name, resourceCulture) ?? string.Empty;
+            return ResourceManager.GetString(name, System.Threading.Thread.CurrentThread.CurrentUICulture) ?? string.Empty;
         }
 
         // MainWindow resources

@@ -7,9 +7,9 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Resources\app.ico</ApplicationIcon>
     <!-- Application metadata -->
-    <Version>1.2.0</Version>
-    <AssemblyVersion>1.2.0.0</AssemblyVersion>
-    <FileVersion>1.2.0.0</FileVersion>
+    <Version>1.2.1</Version>
+    <AssemblyVersion>1.2.1.0</AssemblyVersion>
+    <FileVersion>1.2.1.0</FileVersion>
     <Company>Doofenshmirtz Evil Incorporated</Company>
     <Product>Kenshi Mod Manager</Product>
     <Authors>Aze4ka</Authors>
@@ -80,7 +80,7 @@
       <PdbFiles Include="$(PublishDir)**\*.pdb" />
     </ItemGroup>
     <Delete Files="@(PdbFiles)" />
-    <Message Text="✓ Locales moved to locales/ folder" Importance="high" />
-    <Message Text="✓ Debug files removed" Importance="high" />
+    <Message Text="вњ“ Locales moved to locales/ folder" Importance="high" />
+    <Message Text="вњ“ Debug files removed" Importance="high" />
   </Target>
 </Project>
