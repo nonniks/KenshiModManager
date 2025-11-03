@@ -51,7 +51,8 @@ public partial class App : Application
                         dialog.DataContext = new UpdateDialogViewModel(
                             args.CurrentVersion?.ToString() ?? "Unknown",
                             args.InstalledVersion?.ToString() ?? "Unknown",
-                            args.DownloadURL
+                            args.DownloadURL,
+                            args
                         );
 
                         if (Current.MainWindow != null && Current.MainWindow.IsLoaded)

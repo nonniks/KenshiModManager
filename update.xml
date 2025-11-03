@@ -2,5 +2,6 @@
 <item>
   <version>1.2.1.0</version>
   <url>https://github.com/nonniks/KenshiModManager/releases/download/v1.2.1/KMM_portable_v1.2.1.zip</url>
+  <checksum algorithm="SHA256">D47606B702557E7106211D00333CA651244E679C8A21CBE438452E1FC15F7656</checksum>
   <mandatory>false</mandatory>
 </item>
